@@ -1,0 +1,42 @@
+ssh -i ~/.ssh/chef-knife.pem [server-name]
+ssh [server-name]
+
+crontab -e # Modify crontab
+0,30 * * * * [your_command] >/dev/null
+
+Copy file from local to server in local terminal
+rsync -av -e ssh --progress [localfile] [user@server]:[server=destination]
+
+Copy file from server to local in local terminal
+rsync -chavzP --stats [user@server:file-path] [localDestination]
+
+Check mail
+/var/spool/mail/ec2-user
+
+VI clear all lines
+:1,$d
+
+List all directories inside a dir
+find [dir] -type d -print
+
+Print a PID by process name
+ps -A | grep -m1 mysql | awk '{print $1}'
+
+Kill a process by PID
+kill -SIGTERM 3739
+
+grep -rnw 'directory' -e "pattern" 
+sudo grep -rnw /var/log/messages -e ""
+
+# reset PATH
+source /etc/profile
+
+# List previous 
+!ls 
+
+# Background task that doesn't die when parent dies
+screen
+screen -ls 
+
+cd ~
+cd -

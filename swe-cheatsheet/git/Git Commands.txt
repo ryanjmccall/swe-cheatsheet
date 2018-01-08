@@ -1,0 +1,114 @@
+Git Commands
+
+--Aliases--
+$ git config --global alias.co checkout
+$ git config --global alias.br branch
+$ git config --global alias.ci commit
+$ git config --global alias.st status
+
+--Setup Process--
+Fork from web UI
+Copy url from my fork
+git clone [my-fork-url]
+
+--Configure remotes--
+git remote set-url origin [main-repo-url]
+git remote add upstream [main-repo-url]
+
+git remote set-url --push origin [my-fork-url]
+git remote add downstream [my-fork-url]
+
+git remote -v #Show remotes
+
+—- Create a branch—-
+git checkout -b [branchName]
+
+or 
+
+git branch [branchName]
+git checkout [branchName]
+
+--Share changes--
+# make some changes
+git status
+git add [file or dir] #stages
+git commit [-a] [-m message]
+git push origin [branchName]
+
+-Add forgotten/change file to commit-
+git add [forgotten]
+git commit --amend
+
+--Changes--
+git diff # Shows differences between working and staged versions
+git diff --staged
+
+git rm [fileName]
+git rm --cached [fileName] #git not longer tracks
+
+--Renaming--
+git mv [src] [dest] # rename file
+git branch -m [newname] # Rename current branch
+git branch -m [oldname] [newname] # Rename non-current branch
+
+--Update local master--
+git checkout master
+git pull origin master
+
+--Merge a branch with master--
+git checkout master
+git pull origin master
+git checkout [branchName]
+git merge master
+# Fix conflicts and add changes
+git commit # Use default commit message
+git push origin [branchName]
+
+--Stashing changes--
+git stash [apply | drop | list | pop]
+git stash
+git stash save [stash name]
+git stash show -p [stash name]
+
+--See unpushed commits--
+git log origin/master..master
+git log [since]..[until]
+
+--Undoing commits--
+# Only if the commit has not be merged
+git reset --soft Head^ 
+
+# change a commit by adding a new one
+git revert [SHA]
+
+-Reset master-
+# if things go wrong
+git checkout master
+git fetch upstream master
+git reset --hard upstream/master
+(git clean -dfx)
+
+--Grab remote branch--
+git fetch
+git checkout [branchName]
+git help config
+
+git fetch
+git br --track branchA origin/branchA
+
+--Submodules--
+git submodule update --remote
+git log -p --submodule
+
+--New--
+git add -p
+git diff --cached
+git checkout --ours
+git fetch --prune origin
+
+--How to pull remote branch from somebody else's repo--
+git remote add [coworker] git://path/to/[coworker]/[repo].git
+git fetch [coworker]
+git checkout --track [coworker]/[branch]
+
+author:ryanjmccall is:pr is:closed merged:>=2016-02-10 

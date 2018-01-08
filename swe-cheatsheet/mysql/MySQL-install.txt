@@ -1,0 +1,10 @@
+How to install mysql community on OSX
+
+Download dmg from website v5.7.9
+Install package 
+Save generated password
+Start MySql in system prefs
+Add /usr/local/mysql/bin to PATH
+$ mysql -u root -p --connect-expired-password
+$ SET PASSWORD = PASSWORD(''); # no password
+$ exit

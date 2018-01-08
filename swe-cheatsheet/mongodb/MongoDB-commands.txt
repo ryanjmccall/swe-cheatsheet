@@ -1,0 +1,35 @@
+Shell Commands
+
+# Check version
+mongod --version
+
+# Backup and restore
+# http://docs.mongodb.org/manual/tutorial/backup-and-restore-tools/
+
+# Dump a collection into a collection-name.bson and collection-name.metadata.json
+mongodump --db [db-name] --collection [collection-name]
+
+# Restore a collection from a .bson file
+mongorestore --db [db-name] --collection [collection-name] [path-to-bson-file]
+
+# Export a collection to a file as a JSON array
+mongoexport --db [db-name] --collection [collection-name] --jsonArray > [path/file-name.json]
+
+# Connect via terminal to mongo
+	
+mongo [URL]:[port]/[collection] -u [username] -p [password]
+
+# Select statements
+
+# Find distinct value occurrences
+db.foo.distinct("a.b.c")
+
+# Return more than 20 results at a time
+DBQuery.shellBatchSize = 100
+
+Big Distincts
+pipeline = [{ $group: { _id: "$data.Frequency"} }]
+R = db.runCommand({"aggregate": "COLL_NAME", "pipeline": pipeline});
+printjson(R)
+
+db.archive.distinct("data.Frequency")

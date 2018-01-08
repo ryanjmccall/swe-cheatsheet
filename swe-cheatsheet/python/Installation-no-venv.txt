@@ -1,0 +1,18 @@
+1. Install Homebrew http://brew.sh/
+2. brew update
+3. brew install python3
+4. which python3 and which pip3
+5. alias python and pip to python3 and pip3 respectively in bashrc or bash_profile
+6. set PYTHONPATH to /usr/local/lib/python3.5/site-packages:$TDROOT
+
+7. Test python package installation
+7a. pip install jsonschema
+7b. pip show jsonschema # should in /usr/local/lib/python3.5/site-packages 
+
+8. clone repo
+9. cd root
+10. pip install -r requirements.txt
+11. python setup.y run_tests
+12. vagrant destroy
+13. vagrant up
+14. vagrant provision

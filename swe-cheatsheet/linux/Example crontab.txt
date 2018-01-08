@@ -1,0 +1,3 @@
+PATH=/opt/numenta/anaconda/bin:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin
+# MIN HR DAY_MON MON DoW COMMAND
+*/1 * * * * python /usr/local/bin/taurus_monitoring.py --testEmail > /dev/null

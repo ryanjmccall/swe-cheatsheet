@@ -1,0 +1,5 @@
+Installing and building Numenta projects
+
+sudo python setup.py develop --install-dir=[Site packages in PYTHONPATH] --script-dir=Users/[you]/Library/Python/2.7/bin
+
+sudo python setup.py develop --install-dir=/Users/rmccall/Library/Python/2.7/lib/python/site-packages --script-dir=/Users/rmccall/Library/Python/2.7/bin

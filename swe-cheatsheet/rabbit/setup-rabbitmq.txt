@@ -1,0 +1,10 @@
+1) Download rabbitmq 
+    MAC:
+    a) `brew install rabbitmq`
+       (This requires developer tools, so to do this you will need to have an updated Xcode developer tools.)
+        This will install rabbitmq in the default Cellar. Probably located in /usr/local/Cellar/rabbitmq/3.3.5
+    b) To run rabbitmq:
+        `cd /usr/local/Cellar/rabbitmq/3.3.5/sbin`
+        `sudo ./rabbitmq-server`
+        Alternatively, you can add rabbitmq to your $PATH and will then be able to run rabbitmq commands from any 
+        directory.

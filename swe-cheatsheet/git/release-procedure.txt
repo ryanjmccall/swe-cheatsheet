@@ -1,0 +1,11 @@
+package.json
+VERSION
+
+git checkout develop
+git co -b release-1.7.0
+vi package.json # remove snap shot
+git co develop
+vi package.json release-1.8.0-SNAPSHOT
+git tag -a '1.7.0-origin' 
+git push origin release-1.7.0
+git push origin 1.7.0-orig
