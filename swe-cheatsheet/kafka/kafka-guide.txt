@@ -1,0 +1,246 @@
+Kafka Guide
+==========
+
+# Start the server
+zookeeper-server-start $KAFKAHOME/config/zookeeper.properties
+kafka-server-stop
+kafka-server-start $KAFKAHOME/config/server.properties
+
+# List All Topics
+kafka-topics --zookeeper localhost:2181 --list 
+kafka-topics.sh --zookeeper localhost:2181 --list 
+
+# Create a new topic 
+kafka-topics --zookeeper localhost:2181 --topic [X] --create --replication-factor 1 --partitions X
+
+# describe a topic
+kafka-topics --zookeeper localhost:2181 --topic [X] --describe 
+
+# Alter Topic
+kafka-topics --zookeeper localhost:2181 --topic [X] --alter --partitions 3
+
+# Delete Topic
+kafka-topics --zookeeper localhost:2181 --topic [X] --delete 
+
+# Allow topics to be deleted
+# add directive
+vim $KAFKAHOME/config/server.properties
+# add line
+delete.topic.enable=true
+
+# Send messages
+kafka-console-producer --broker-list localhost:9092 --topic [X]
+
+# Start consumer
+kafka-console-consumer --zookeeper localhost:2181 --topic [X] --from-beginning
+
+# in shell
+kafka-topics --zookeeper localhost:2181 --delete --topic my-topic
+
+# Delete a topic from zookeeper if kafka-topics delete method won't work
+sudo zookeeper-shell localhost:2181 rmr /brokers/topics/[X]
+
+# Undelete a topic (helpful when you can't delete a topic and it says "marked for deletion")
+zkCli
+$ delete /admin/delete_topics/$YOUR_TOPIC_NAME
+
+# Kafka configuration + Clear / purge a topic
+# View
+kafka-configs --zookeeper localhost:2181 --describe --entity-type topics --entity-name [TOPIC]
+# Add
+kafka-configs --zookeeper localhost:2181 --alter --entity-type topics --entity-name [TOPIC] --add-config retention.ms=1000
+# Delete
+kafka-configs --zookeeper localhost:2181 --alter --entity-type topics --entity-name [TOPIC] --delete-config retention.ms
+
+# list consumer group information
+$KAFKAHOME/bin/kafka-run-class.sh kafka.admin.ConsumerGroupCommand --list --zookeeper localhost:2181
+
+# delete consumer group information
+$KAFKAHOME/bin/kafka-run-class.sh kafka.admin.ConsumerGroupCommand --delete --group console-consumer-13406 --zookeeper localhost:2181
+
+Topics - categories of message feeds
+Producers - Processes that publish messages
+Consumers - Processses that subscribe to topics and process the feed of published messages
+Broker - one of potentially many servers running Kafka 
+
+Communication using TCP protocol.
+Each partition is an ordered, immutable sequence of messages that is continually appended to—a commit log. The messages in the partitions are each assigned a sequential id number called the offset that uniquely identifies each message within the partition. 
+
+###########
+"leader" is the node responsible for all reads and writes for the given partition. Each node will be the leader for a randomly selected portion of the partitions.
+"replicas" is the list of nodes that replicate the log for this partition regardless of whether they are the leader or even if they are currently alive.
+"isr" is the set of "in-sync" replicas. This is the subset of the replicas list that is currently alive and "sufficiently" caught-up to the leader. 
+- Only ISR members are eligible for election as a leader. When a producer sends a record with ack mode set to "all," the record is only synced with the ISRs.
+###########
+
+# Kafka Connect to import/export data
+connect-standalone.sh config/connect-standalone.properties config/connect-file-source.properties config/connect-file-sink.properties
+
+# Kafka Streams is a client library of Kafka for real-time stream processing and analyzing data stored in Kafka brokers
+
+===========
+Python Client
+===========
+
+KafkaProducer
+---------------------
+- thread safe - only need one instance
+- contains buffer -- send() is asynchronous, calls to Kafka cluster are batched
+-- size specified by the ‘batch_size’ config. Making this larger can result in more batching, but requires more memory
+--  reduce the number of requests you can set ‘linger_ms’ to something greater than 0
+--  buffer_memory controls the total amount of memory available to the producer for buffering
+- ‘acks’ config controls the criteria under which requests are considered complete
+- If the request fails, the producer can automatically retry, with the possibility of creating duplicates (default setting)
+- key_serializer and value_serializer instruct how to turn the key and value objects the user provides into bytes
+- Keyword Arguments:
+-- bootstrap_servers (str or list of str) host[:port] default is 9092
+-- client_id (str) – a name for this client
+-- key_serializer (callable)
+-- value_serializer (callable)
+-- acks (0, 1, "all")
+--- 0: Producer will not wait for any acknowledgment from the server
+--- 1: Wait for leader to write the record to its local log only
+--- all: Wait for the full set of in-sync replicas to write the record
+- compression_type (str) applies to batches
+-- retries (int)  can affect ordering (see max_in_flight_connectdions_per_connection)
+-- linger_ms (int)
+-- partitioner (callable) – Callable used to determine which partition each message is assigned to
+-- buffer_memory (int)
+
+Producer methods
+--------------------------
+close(timeout=10)   # OS Signals hup, stop
+flush(timeout=10)
+partitions_for(topic)
+send(topic, value, partition (int, optional), key(bytes, optional, determines partition), timestamp_ms (epoch timestamp))
+- raises KafkaTimeoutError
+
+
+KafkaConsumer
+-----------------------
+assign(partitions) -- Manually assign a list of TopicPartitions to this consumer
+committed(partition) -- Get the last committed offset for the given partition
+
+
+===================================================
+Kafka four core APIs
+===================================================
+- producer
+- consumer
+- streams -- allows non-trivial processing to compute aggregations off of streams or to join stream together
+- connector
+
+- Record - key (optional that determines where record is sent), value (in bytes), timestamp 
+- Topic - log of records. typically divided up into partitions and distributed across machines
+- Partitioner - hashing function that assigns new records to a particular topic in a partition based on the record's key
+- Producer is responsible for choosing, based on its partitioner, which partition a record is assigned for a given topic
+- Topics are always multi-subscriber
+
+- Consumers label themselves with a consumer group name
+- Each record published to a topic is delivered to 1 consumer instance within each subscribing consumer group
+-- If all consumer instances have same consumer group, then records effectively "load balanced" over the consumer instances
+-- If all consumer instances have different consumer groups, each record will be broadcast to all consumer processes
+-- Typically, small number of consumer groups with many consumer instances per consumer group
+
+Consumption
+- divide up partitions over consumer instances so that each consumer instance is exclusive consumer of a "fair share" of partitions
+- Kafka only provides total order guaruntee over records *within* a partition, not between different partitions in a topic
+-- Can get total order with 1 partition per topic. Means only 1 consumer process per consumer group
+- cannot have more consumer instances in a consumer group than there are partitions
+
+Consumer groups of consumer instances bridge features of "queuing" and "publish-subscribe"
+
+
+Kafka Consumer
+=============
+position - the offset of the next record that will be doled out
+- automatically advances every time the consumer calls poll() and receives messages
+committed position - last offset that has been saved securely
+- offset can be used in recovery
+- consumer can either: 
+	automatically commit offsets periodically
+	manually control committed position by call commitSync() (blocking)
+	commitAsync() (non-blocking), can trigger passed-in OffsetCommitCallback
+
+- each consumer belongs to a consumer group
+- can dynamically set the list of topics it wants to subscribe to
+- consumer groups can dynamically change size and rebalancing occurs when this happens
+
+Detecting Consumer Failures
+=======================
+- after subscribing to a set of topics the consumer will automatically join the group when poll() is invoked
+- if session timeout passes before poll() is called then consumer is kicked out of group and its partitions will be reassigned
+- typically, when session timeout occurs, consumer won't be able to commit offsets
+	-- e.g. - CommitFailedException thrown from commitSync()
+- close() cleanly signals to server to remove a Consumer
+- max.poll.records => controls records processed per poll. small value leads to shorter call time and lower likelihood of timeout failure
+
+
+Consumption Use Cases
+====================
+Automatic offset committting - 
+-- properties
+	"enable.auto.commit": "true",
+	"auto.commit.interval.ms": "1000" (frequency)
+
+Manual Offset Control
+- User can control when messages should be considered "consumed" by committing an offset
+-- useful when consumption is couple with some processing logic
+-- provides "at-least-once" delivery
+- User consumer.conmmitSync([optionally-specified-offset-of-next-record-to-read])
+- (see Javadoc example)
+
+Manual Partition Assignment
+=======================
+- by default Kafka dynamically assigns a fair share of the partitions based on active consumers
+- when you require finer control over specific partition assignments, e.g., prcoess maintaining some kind of local state
+- * instead of subscribing to a topic via subscribe, you simply call assign(Collection) with the full list of topic-partitions you want to consume
+-- call poll() as usual
+-- group that consumer specifies still used for committting offsets, but set of partitions only change with additional calls to assign
+---> consumer failures will not cause assigned partitions to be rebalanced
+---> * to avoid offset commit conflicts, ensure groupid is unique for each consumer instance
+---> * Can't mix manual partition assignment with dynamic partition assignment through topic subscription (using subscribe())
+
+Storing Offsets Outside Kafka
+=======================
+Example: Results of consumption stored in DB 
+--> Commit both the results and the offset in a single transaction 
+Flow
+1) enable.auto.commit = false
+2) track/save offset provided with each Consumer Record to save position
+3) On restart use checkpointed offset in seek() call
+=> Allows for "exactly once," better than "at-least-once"
+
+Controlling Consumer's Position
+=========================
+Possibility: "if you fall behind, skip ahead in line"
+- seek(topic-partition, long)
+- seekToBeginning(Collection<topic-partition>)
+- seekToEnd(Collection<topic-partition>)
+
+Consumption Flow Control
+=====================
+E.g., two topics are combing, one topic falls behind
+Solution: dynamic control of consumption flows: pause(Collection<t-p>), resume(Collection<t-p>) to affect result of polling 
+If consumer assigned to multiple partitions it will try to consume from all together with equal priority
+
+Multi-threaded processing
+====================
+Consumer not thread-safe
+Exception: can wakeup() blocking consumer (e.g., for shutdown) 
+-- See good Javadoc code example
+
+Option 1. One Consumer Per Thread (pros and cons)
+Option 2. Decouple Consumption and Processing
+-- one or more consumer threads handle data consumption. push records to a blocking queue consumed by a pool of processor threads handling record processing
+
+Availability & Durability Guarantees
+============================
+Options in place to prefer message durability of availability
+- Replication Factor
+- Preferred Leader Election
+- Topic-level config
+-- Unclean leader election - allows an out-of-sync replica to become the leader and preserve the availability of the partition. messages not synced to new leader are lost.
+-- Minimum In-sync Replicas
+
+
