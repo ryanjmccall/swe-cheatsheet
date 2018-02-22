@@ -1,0 +1,35 @@
+GNU Screen
+
+# list all screens
+screen -ls
+
+# start a new screen
+screen 
+
+# start a new screen with name
+screen -S [name]
+
+# show commands and parameters
+Ctrl-a ?
+
+# create new window within current screen
+Ctrl-a c
+
+# switching between windows
+# next window 
+Ctrl-a n
+
+# previous window
+Ctrl-a p
+
+# detach from screen
+Ctrl-a d
+
+# reattach to screen
+screen -r [name]
+
+# stop screen
+exit
+
+# kill screen
+Ctrl-a k
