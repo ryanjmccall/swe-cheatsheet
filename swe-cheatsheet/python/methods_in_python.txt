@@ -1,0 +1,17 @@
+Methods in Python
+- method is a function stored as a class attribute
+-> Pizza.get_size() -> unbound!
+-> Pizza.get_size(Pizza(42)) -> 42
+
+- Python binds all the methods from class Pizza to any instance of this class
+- get bound instance
+-> m = Pizza(42).get_size
+-> m.__self__
+
+- Python3 functions attached to class are not unbound rather are simple
+function bound to an object if required
+
+- Class methods - not bound to object, bound to class
+- When to use?
+-- Factory methods used to create an instance of the class
+-- Static methods calling static methods

@@ -1,0 +1,19 @@
+A Few Useful Things
+by Pedro Domingos
+
+1) learning = representation + evaluation + optimization
+a) representation
+- feature vectors
+- is classifier in hypothesis space
+
+b) evalution (objective or scoring) function
+- internal used by algorithm
+- external one we want classifier to optimize
+
+c) optimization
+- search method to select best model
+- common for new learners to start out with off-the-shelf optimizers,
+later replaced by customed-designed ones
+
+3) Generalization
+- performance must be evaluated on a held-out test set to demonstrate generalization

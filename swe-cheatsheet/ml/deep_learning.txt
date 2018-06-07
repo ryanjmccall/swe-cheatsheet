@@ -1,0 +1,30 @@
+Model changes that causes at least 30 data point to change are usually statistically significant
+
+Validation set size
+- 30,000 examples, changes > 0.1% in accuracy
+
+If computing loss requires N floating point operations, computing gradient
+requries about 3N.
+
+Stochastic Gradient Descent (SGD)
+- compute loss over a random sample (~1,000 data points)
+
+Helping SGC
+- inputs; mean=0, equal variance (small)
+- initial weights; random, mean=0, equal variance (small)
+- momentum
+-- use M(w1, w2) where M=running average of gradients  M<- 0.9M + delta(L)
+
+Multinomial logistic classification
+D(s(wx + b), L)
+
+Loss or average cross entropy
+- L = 1 / N Sigma_i D(s(w*x_i + b), L_i)
+
+Normalizing inputs & initial weights
+Weight initialization
+- draw values from N(0, 1)
+
+Learning Rate Decay
+ADAGRAD - only have to select batch size & weight initialization hyperparameters
+Rectified Linear units (ReLU)

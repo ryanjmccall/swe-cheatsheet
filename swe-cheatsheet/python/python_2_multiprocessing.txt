@@ -1,0 +1,22 @@
+- Pool
+p = Pool(5)
+print(p.map(f, [1, 2, 3]))
+
+- Process
+p = Process(target=f, args=('bob',))
+p.start()
+p.join()
+
+Communication between processes
+- Queue - thread & process safe
+- Pipe - returns a pair of connection objects connected by a pipe which is duplex (two-way)
+
+aConn, bConn = Pipe()
+p = Process(target=f, args=(aConn,))
+p.start()
+print bConn.recv()
+p.join()
+
+Synchronization between processes
+lock = Lock()
+# pass to process which invokes acquire() and release()
