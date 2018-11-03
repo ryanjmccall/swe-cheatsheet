@@ -37,7 +37,7 @@
     12) Learn these important bit manipulation tactics.
     https://www.geeksforgeeks.org/bits-manipulation-important-tactics/
 
-    Read and do the exercises (pages 38 - 58) from the CTCI book.
+    13) Read and do the exercises (pages 38 - 58) from the CTCI book.
 """
 
 
