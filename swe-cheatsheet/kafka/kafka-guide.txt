@@ -1,10 +1,20 @@
 Kafka Guide
 ==========
+brew install kafka
+
+# e.g.
+export KAFKA_CONFIG=/usr/local/Cellar/kafka/1.0.0/libexec/config
 
 # Start the server
-zookeeper-server-start $KAFKAHOME/config/zookeeper.properties
+zookeeper-server-start $KAFKA_CONFIG/zookeeper.properties
 kafka-server-stop
-kafka-server-start $KAFKAHOME/config/server.properties
+kafka-server-start $KAFKA_CONFIG/server.properties
+
+# Allow topics to be deleted
+# add directive
+vim $KAFKA_CONFIG/server.properties
+# add line
+delete.topic.enable=true
 
 # List All Topics
 kafka-topics --zookeeper localhost:2181 --list 
@@ -21,12 +31,6 @@ kafka-topics --zookeeper localhost:2181 --topic [X] --alter --partitions 3
 
 # Delete Topic
 kafka-topics --zookeeper localhost:2181 --topic [X] --delete 
-
-# Allow topics to be deleted
-# add directive
-vim $KAFKAHOME/config/server.properties
-# add line
-delete.topic.enable=true
 
 # Send messages
 kafka-console-producer --broker-list localhost:9092 --topic [X]
