@@ -4,7 +4,7 @@
     1) Implement an ArrayList from scratch.
     https://github.com/jwasham/coding-interview-university#arrays
 
-    2) Reverse a linked list X
+    2) Reverse a linked list
 
     3) Implement a Stack & a Queue using Array
 

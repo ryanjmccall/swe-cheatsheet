@@ -1,0 +1,14 @@
+Data Structure,Access,Search,Insert,Delete,Space
+Array,O(1),O(n),O(n),O(n),O(n)
+Stack,O(n),O(n),O(1),O(1),O(n)
+Queue,O(n),O(n),O(1),O(1),O(n)
+Linked List,O(n),O(n),O(1),O(1),O(n)
+Hash Table,,O(1) / O(n) ,O(1) / O(n) ,O(1) / O(n) ,O(n)
+BST,O(lg(n) / O(n),O(lg(n) / O(n),O(lg(n) / O(n),O(lg(n) / O(n),O(n)
+,,,,,
+Algorithm,Best,Average,Worst,Space (worst),
+qsort,O(n log(n)),O(n log(n)),O(n ^ 2),O(log(n)),
+mergesort,O(n log(n)),O(n log(n)),O(n log(n)),O(n),
+heapsort,O(n log(n)),O(n log(n)),O(n log(n)),O(1),
+counting sort,O(n + k),O(n + k),O(n + k),O(k),
+radix sort,O(nk),O(nk),O(nk),O(n + k),
