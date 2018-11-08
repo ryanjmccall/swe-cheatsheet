@@ -11,7 +11,8 @@ class Trie:
         for w in words:
             self._insert(self.root, w)
 
-    def _insert(self, node: dict, word: str):
+    @staticmethod
+    def _insert(node: dict, word: str):
         for l in word:
             if l not in node:
                 node[l] = dict()
@@ -61,7 +62,7 @@ class Trie:
 def run():
     t = Trie()
     t.makeTrie("foo", "bar", "baz", "barz")
-    
+
     assert not t.contains("ba")
     assert t.contains("bar")
     assert t.contains("barz")
@@ -75,5 +76,6 @@ def run():
     assert t.remove("barz")
     assert not t.contains("barz")
     assert t.contains("bar")
+
 
 run()
