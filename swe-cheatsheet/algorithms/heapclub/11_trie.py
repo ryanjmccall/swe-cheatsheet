@@ -1,47 +1,36 @@
+from collections import deque
+from typing import List, Union
 
-_END = "_end_"
+
+_END = "__end__"
 
 
 class Trie:
-    def __init__(self):
-        self.root = dict()
-
-    def makeTrie(self, *words):
+    def __init__(self, *words):
         self.root = dict()
         for w in words:
             self._insert(self.root, w)
 
     @staticmethod
     def _insert(node: dict, word: str):
-        for l in word:
-            if l not in node:
-                node[l] = dict()
+        for c in word:
+            if c not in node:
+                node[c] = dict()
 
-            node = node[l]
+            node = node[c]
 
         node[_END] = None
-
-    def contains(self, word: str) -> bool:
-        cur = self.root
-        for l in word:
-            if l in cur:
-                cur = cur[l]
-            else:
-                return False
-
-        # case where "roommate" in trie but not "room"
-        return _END in cur
 
     def insert(self, word: str):
         self._insert(self.root, word)
 
-    def remove(self, word: str) -> bool:
+    def delete(self, word: str) -> bool:
         cur = self.root
         path = []
-        for l in word:
-            if l in cur:
+        for c in word:
+            if c in cur:
                 path.append(cur)
-                cur = cur[l]
+                cur = cur[c]
             else:
                 return False
 
@@ -58,10 +47,50 @@ class Trie:
 
         return False
 
+    def contains(self, word: str) -> bool:
+        # can have case where "roommate" in trie but not "room"
+        ptr = self._traverse(word)
+        return _END in ptr if ptr else False
+
+    def is_prefix(self, word: str) -> bool:
+        return self._traverse(word) is not None
+
+    def words_with_prefix(self, prefix: str) -> List[str]:
+        words = []
+        ptr = self._traverse(prefix)
+        q = deque([(ptr, prefix)])
+        while q:
+            cur, pre = q.popleft()
+            for k, v in cur.items():
+                if k == _END:
+                    words.append(pre)
+                else:
+                    q.append((v, pre + k))
+
+        return words
+
+    def _traverse(self, word: str) -> Union[None, dict]:
+        ptr = self.root
+        for c in word:
+            if c in ptr:
+                ptr = ptr[c]
+            else:
+                return None
+
+        return ptr
+
 
 def run():
-    t = Trie()
-    t.makeTrie("foo", "bar", "baz", "barz")
+    t = Trie("foo", "bar", "baz", "barz")
+
+    assert not t.is_prefix("a")
+    assert t.is_prefix("b")
+    assert t.is_prefix("ba")
+    assert t.is_prefix("barz")
+
+    assert ["foo"] == t.words_with_prefix("f")
+    assert ["bar", "barz"] == t.words_with_prefix("bar")
+    assert ["bar", "barz", "baz"] == list(sorted(t.words_with_prefix("ba")))
 
     assert not t.contains("ba")
     assert t.contains("bar")
@@ -70,10 +99,10 @@ def run():
     assert not t.contains("fo")
     assert t.contains("foo")
 
-    assert t.remove("foo")
+    assert t.delete("foo")
     assert not t.contains("foo")
 
-    assert t.remove("barz")
+    assert t.delete("barz")
     assert not t.contains("barz")
     assert t.contains("bar")
 
