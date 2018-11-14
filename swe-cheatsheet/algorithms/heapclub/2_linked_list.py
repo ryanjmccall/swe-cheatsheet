@@ -8,25 +8,26 @@ class Node:
 class LinkedList:
     def __init__(self):
         self.head = None
-        self.endIdx = -1
+        self.size = 0
 
     def _getNode(self, index: int) -> (Node, Node):
-        assert 0 <= index <= self.endIdx
+        assert 0 <= index < self.size
         prev = None
         current = self.head
-        for _ in range(self.endIdx - index):
+        for _ in range(self.size - 1 - index):
             prev = current
             current = current.next
         return current, prev
 
     def insert(self, n: Node, index: int):
         current, _ = self._getNode(index)
-        n.next = current.next
-        current.next = n
-        self.endIdx += 1
+        if current:
+            n.next = current.next
+            current.next = n
+        else:
+            self.head = n
 
-    def append(self, v):
-        self.insert(Node(v), self.endIdx)
+        self.size += 1
 
     def removeAt(self, index: int):
         current, prev = self._getNode(index)
@@ -36,11 +37,14 @@ class LinkedList:
             self.head = current.next
 
         current.next = None
-        self.endIdx -= 1
+        self.size -= 1
         return current
 
+    def append(self, v):
+        self.insert(Node(v), self.size)
+
     def removeLast(self) -> Node:
-        return self.removeAt(self.endIdx)
+        return self.removeAt(self.size)
 
     def removeFirst(self) -> Node:
         return self.removeAt(0)
@@ -58,6 +62,9 @@ class LinkedList:
 
         # when loop terminates, current is None and prev is correct
         self.head = prev
+
+    def size(self) -> int:
+        return self.size
 
     def __str__(self):
         vals = []
@@ -77,12 +84,15 @@ def genLinkedList(size: int) -> LinkedList:
     return a
 
 
-def testReverseLinkedList():
+def run():
     a = genLinkedList(6)
     print(a)
     a.reverse()
     print(a)
 
+    b = LinkedList()
+    b.insert(Node(5), 0)
+
 
 if __name__ == "__main__":
-    testReverseLinkedList()
+    run()
