@@ -8,20 +8,42 @@ class Node:
 class LinkedList:
     def __init__(self):
         self.head = None
+        self.endIdx = -1
+
+    def _getNode(self, index: int) -> (Node, Node):
+        assert 0 <= index <= self.endIdx
+        prev = None
+        current = self.head
+        for _ in range(self.endIdx - index):
+            prev = current
+            current = current.next
+        return current, prev
+
+    def insert(self, n: Node, index: int):
+        current, _ = self._getNode(index)
+        n.next = current.next
+        current.next = n
+        self.endIdx += 1
 
     def append(self, v):
-        n = Node(v)
-        n.next = self.head
-        self.head = n
+        self.insert(Node(v), self.endIdx)
 
-    def __str__(self):
-        vals = []
-        cur = self.head
-        while cur:
-            vals.append(str(cur.val))
-            cur = cur.next
+    def removeAt(self, index: int):
+        current, prev = self._getNode(index)
+        if prev:
+            prev.next = current.next
+        else:
+            self.head = current.next
 
-        return ", ".join(vals)
+        current.next = None
+        self.endIdx -= 1
+        return current
+
+    def removeLast(self) -> Node:
+        return self.removeAt(self.endIdx)
+
+    def removeFirst(self) -> Node:
+        return self.removeAt(0)
 
     def reverse(self):
         prev = None
@@ -36,6 +58,16 @@ class LinkedList:
 
         # when loop terminates, current is None and prev is correct
         self.head = prev
+
+    def __str__(self):
+        vals = []
+        cur = self.head
+        while cur:
+            vals.append(str(cur.val))
+            cur = cur.next
+
+        return ", ".join(vals)
+
 
 def genLinkedList(size: int) -> LinkedList:
     a = LinkedList()
