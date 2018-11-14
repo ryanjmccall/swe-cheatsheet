@@ -1,4 +1,3 @@
-from collections import deque
 from typing import List, Union
 
 
@@ -37,7 +36,7 @@ class Trie:
         if _END in cur:
             cur.pop(_END)
             for i in range(len(path) - 1, -1, -1):
-                # work back up path removing single entry dicts
+                # work backwards up path removing single entry dicts
                 node = path[i]
                 char = word[i]
                 if not node[char]:
@@ -58,14 +57,17 @@ class Trie:
     def words_with_prefix(self, prefix: str) -> List[str]:
         words = []
         ptr = self._traverse(prefix)
-        q = deque([(ptr, prefix)])
-        while q:
-            cur, pre = q.popleft()
+        if not ptr:
+            return words
+
+        stack = [(ptr, prefix)]
+        while stack:
+            cur, pre = stack.pop()
             for k, v in cur.items():
                 if k == _END:
                     words.append(pre)
                 else:
-                    q.append((v, pre + k))
+                    stack.append((v, pre + k))
 
         return words
 
@@ -75,7 +77,8 @@ class Trie:
             if c in ptr:
                 ptr = ptr[c]
             else:
-                return None
+                ptr = None
+                break
 
         return ptr
 
