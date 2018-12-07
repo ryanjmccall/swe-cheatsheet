@@ -1,3 +1,5 @@
+eval "$(pyenv init -)"
+
 [ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
 
 # Prompt
@@ -23,4 +25,3 @@ alias lsd="ls -lrt -d -1 $PWD/{*,.*}"
 alias pycharm="open /Applications/PyCharm\ CE.app/"
 alias pull_nta="pushd $HOME/nta && find . -mindepth 1 -maxdepth 1 -type d -print -exec git -C {} pull \; && popd"
 alias jnb="jupyter notebook"
-
