@@ -73,9 +73,7 @@ class Board:
         return self.moves < self.totalMoves
 
     def print(self):
-        for r in self.b:
-            print("|".join(r))
-        print()
+        print("\n".join("|".join(r) for r in self.b) + "\n")
 
 
 def main():
