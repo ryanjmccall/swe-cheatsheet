@@ -16,9 +16,7 @@ class Board:
 
     @staticmethod
     def _computeWays(size) -> list:
-        leftDiag = []
-        rightDiag = []
-        ways = [leftDiag, rightDiag]
+        ways = []
         for i in range(size):
             # horizontal ways
             ways.append([(i, j) for j in range(size)])
@@ -26,10 +24,9 @@ class Board:
             # vertical ways
             ways.append([(j, i) for j in range(size)])
 
-            leftDiag.append((i, i))
-            rightDiag.append((i, size - 1 - i))
-
-        return ways
+        left_diag = [(i, i) for i in range(size)]
+        right_diag = [(i, size - 1 - i) for i in range(size)]
+        return ways + [left_diag, right_diag]
 
     def addHumanMove(self):
         # ask for a move
@@ -66,8 +63,12 @@ class Board:
                     return
 
     def isWinner(self, player: str) -> bool:
-        return any(all(self.b[i][j] == player for i, j in way)
-                   for way in self.ways)
+        return any(
+            all(
+                self.b[i][j] == player for i, j in way
+            )
+            for way in self.ways
+        )
 
     def hasSpace(self) -> bool:
         return self.moves < self.totalMoves

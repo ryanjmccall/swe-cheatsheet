@@ -17,12 +17,11 @@ class Solution(object):
         max_size = 0
         for i in range(len(self._grid)):
             for j in range(len(self._grid[i])):
-                size = self._connected_size_for(i, j)
-                max_size = max(max_size, size)
+                max_size = max(max_size, self._connected_size(i, j))
 
         return max_size
 
-    def _connected_size_for(self, i: int, j: int) -> int:
+    def _connected_size(self, i: int, j: int) -> int:
         size = 0
         color = self._grid[i][j]
         visited = set()
@@ -60,7 +59,7 @@ class Solution(object):
 def main():
     grid = [
         ['r', 'g', 'b'],
-        ['r', 'r', 'r'],
+        ['r', 'g', 'r'],
         ['g', 'g', 'r']
     ]
     print(Solution(grid).get_max_connected_size())
