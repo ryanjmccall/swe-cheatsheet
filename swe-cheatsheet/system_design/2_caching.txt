@@ -1,0 +1,23 @@
+Hit cache server (or server) before db
+- e.g., redis, cassandra, memcached (all in memory)
+
+Cache invalidation
+- cache and db out of sync
+- user changes settings, remove value from cache
+- store metadata according to timestamp
+- cache key could be tied to hash of user settings
+- write-through
+-- change cache value, propagates change to db
+-- write slow
+
+- write-back
+-- change cache on write
+-- cron periodically writes cache back to db
+-- cache dies -> lose unwritten data
+
+- cache eviction
+-- FIFO
+-- LIFO
+-- LRU
+
+- think about it as a distributed dict

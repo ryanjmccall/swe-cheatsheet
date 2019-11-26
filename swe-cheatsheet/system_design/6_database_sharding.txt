@@ -1,0 +1,23 @@
+Tackling bottlenecks
+- choose designs with tradeoffs in mind
+
+Horizontal partitioning (sharding)
+- balance rows between databases
+
+Veritcal partitioning (column-based)
+
+Sharding ("load balance" dbs)
+- data partitioning
+-- key base, id mod (db_count)
+-- add new table, requires migrating existing data
+-- mod 100 when you have 3 servers, map to servers behind the scenes
+
+Follow up
+- what about one very popular user, id=5? replicate user 5?
+- segment by location (list partitioning)
+- may become difficult to do range queries
+
+Consistence hashing
+
+Other techniques
+- in memory caching can handle write scaling

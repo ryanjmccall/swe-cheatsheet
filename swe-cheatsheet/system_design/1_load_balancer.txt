@@ -1,0 +1,18 @@
+Load balancing
+- balance the load, improving responsiveness and availability
+- takes request, hashes and sends to app server
+- could also health check app servers
+- have a caching layer
+
+- mechanism
+-- round robin, some machines are under heavy load
+-- lead current load,
+-- more than one to avoid single point of failure
+--- DNS ('load balancer' for the web) can resolve to a number of IP addresses (load balancers)
+
+- drawbacks
+-- horizontally scaling is complex
+-- adds complexity
+-- could use microservices
+
+- client to webserver, webserver to app server, app to database

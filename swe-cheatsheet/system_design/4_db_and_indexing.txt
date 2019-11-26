@@ -1,0 +1,24 @@
+Way to have persistent disk storage
+Db server provides an API
+
+Common to ask design schema for database
+- fields for each table
+- foreign keys
+- every table should have a unique id
+- How to represent?
+-- location: lat and long as Decimal (float or real for more precision)
+-- date, time, datetime - integer
+-- id use 64 bit integer
+- don't store large data blobs, move out into a CDN, separate file system
+
+- why is query slow? joins.
+-- scan table 1, then scan table 2
+-- index creates binary search tree, find in log(n) time
+-- index on multiple fields
+
+- too many indexes
+-- adds space cost
+-- slows down writes b/c have to update index
+
+Think about what queries are required when designing table
+

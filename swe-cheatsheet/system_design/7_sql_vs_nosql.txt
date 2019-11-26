@@ -1,0 +1,39 @@
+SQL
+pros
+- structured
+- joins efficient
+- ACID
+-- atomic
+-- consistency (writes not immediately readable)
+-- isolation
+-- durable
+
+cons
+- trouble with high write?
+
+NoSQL
+pro
+- unstructured, k, v
+- distributed
+- supports write heavy
+- scalable, memory based
+
+cons
+- range queries hard
+- not always transactional, write have delay
+
+KV store
+Document-based
+Wide-column database
+- dont have to read all columns
+Graph database
+- good for graphs
+
+Tradeoffs in storage
+- schema consistent or changes
+- lots of range-based queries
+- horizontal / vertical scaling?
+- ACID?
+
+CAP
+- under network partition choose consistency or availability

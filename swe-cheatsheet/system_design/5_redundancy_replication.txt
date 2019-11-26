@@ -1,0 +1,16 @@
+How to scale out database?
+
+Replication
+- Master-master
+-- multiple databases replicating each other
+-- read/write into either one
+-- more complicated
+-- writes slower due to synchronization
+-- consistency issues
+
+- Master-slave
+-- write master
+-- read slaves
+-- slaves replicate master
+-- Good for read-heavy, write-light scenarios (e.g. youtube)
+-- Pick one slave to perform a backup

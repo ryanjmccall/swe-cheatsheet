@@ -1,0 +1,20 @@
+CDN - Content distribution network
+
+Good for storing static files, images, videos, audio, html
+- hosts files in different geographic locations
+- cache your data in various locations
+
+
+File cdn.mywebsite.com -> resolves to user-local webaddress
+- pull-based - first request across the planet, CDN fetches files and stores locally
+-- simple setup
+-- cost based on usage
+
+- push - upload files are pushed to servers so very first access is fast
+-- manual maintenance
+-- cost based on size
+
+Example
+- instead of http://fooapp.com/image.jpg, it would be http://cdn.fooapp.com/image.jpg
+
+
