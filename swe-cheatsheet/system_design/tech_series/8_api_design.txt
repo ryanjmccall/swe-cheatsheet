@@ -1,0 +1,21 @@
+
+Make sys as easy as possible to use
+What is interface b/w client and webserver?
+Essential / most interesting
+Make it clean, simple, and secure
+
+Top tips
+- clear and concise about what endpoints do
+-- e.g. GET and POST endpoints
+-- Create, Get, Update X
+-- Flow of applications, what are inputs and outputs
+
+- Use User ids object ids as input
+- Successive call chaining is easy
+- API key for authentication privacy / security measures
+- Additional optional parameter
+-- e.g. sort and filter parameters
+
+- Pagination
+-- ensure no skips by using db cursor
+-- e.g. cursor=id of last record
