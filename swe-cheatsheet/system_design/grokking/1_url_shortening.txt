@@ -1,0 +1,139 @@
+URL shortening service
+- usages: optimizing links for marketing analysis and hiding affiliated original URLs
+
+READ HDB: Requirements, estimation, API design, database design, high-level, detailed, bottlenecks
+
+*Requirements*
+
+Functional
+1) given URL generate short link that's shorter
+2) short link redirects
+3) optionally pick custom short link
+4) links expire after default or user-speicifed expiration time
+
+Non-functional
+1) highly available so that redirections don't fail
+2) minimal redirection latency
+3) random generation
+
+Other
+1) Analytics
+2) REST API
+
+
+*Estimation*
+- read-heavy, 100:1 read:write
+
+Requests
+- 500M URLs/month => 50B redirection/mo
+- QPS? 500M / (30*24*3600) = 192 URLs/s
+- 200 URL/s * 100 = 20K URLs/s
+
+Storage
+- keep for 5 years
+- 500M * 12 * 5 = 30B
+- assume 500 bytes / url
+=> 30B * 500 bytes = 15000 Bbyes = 15TB
+
+Bandwidth
+- incoming: 200URL/s * 500bytes = 100,000 byte/s = 100KB/s
+- outgoing: 20K * 500 bytes = 10,000KB/s = 10MB/s
+
+Memory
+- cache 20% of hot URLS
+- 20K/s*3600 seconds*24 hrs = 1.7B req/day
+- .2 * 1.7B * 500bytes = 170 GB  (modern servers can have 256GB RAM)
+
+*APIs*
+create_url(api_dev_key, original_url, custom_alias=None, user_name=None, expire_data=None) -> str or error
+- api_dev_key of registered account
+
+delete_url(api_dev_key, url_key) -> str:
+- url_key=shortened url
+
+- limit create and delete based on user
+
+*DB design*
+- scale billions
+- objects small
+- records independent
+- read-heavy
+
+Schema
+
+table: url
+- pk: hash: varchar(16)
+- original_url: varchar(512)
+- creation: datetime
+- expiration: datetime
+- user_id: int
+
+table: user
+- pk: user_id: int
+- name: varchar(20)
+- email: varchar(32)
+- creation: datetime
+- last_login: datetime
+
+- Use NoSQL wide-column database b/c of large scale and don't have to do joins
+
+*Design*
+
+- base 64 encoding, 52 letters, 10 numbers, 2 symbols
+- 64^6 > 68B possible hashes
+- Md5 produces 128 bit hash value, 2^6 = 64, ceil(128/6) == 22 characters
+
+Duplicate workarounds
+- hash URL plus increasing id, could be problematic if overflow
+- hash URL plus user id, doesn't work for non-users
+- if generated hash already used, keep regenerating
+
+client <request/response> server -encode X> Encoding -store encoding> DB -success/fail> Server
+
+Generate keys offline
+- Key generation service (KGS)
+- Race conditions: keys should be marked as used with atomic get-and-set or a used and unused tables
+- KGS can maintain some keys in memory, if dies, they will be wasted
+- KGS must synchronize/get-lock on in-memory key data structure
+- KGS is single point of failure; must have passive replica on standby
+- App servers can cache keys
+- Key lookup: If key present HTTP-302 redirect with stored URL in location field of request, else HTTP-404
+
+- Key-DB size
+-- 1 char == 1 byte
+-- 6 bytes / key * 68.7B keys = 412B Bytes = 412GB
+
+
+(clients) <>  (appserver) < (key gen service)
+                ^               ^
+                V               V
+                (db)            (key-db)
+
+Data Partitioning
+- range-based on first letter of hash-key => unbalanced
+- hash key storing mode servers, using consistent hashing
+
+Cache
+- app servers cache hot urls using memcached, redis etc
+- eviction: LRU using linked hashmap
+- update: if cache miss, update cache then serve user
+
+Load Balancer
+- b/w clients and app servers
+- b/w app servers and db servers
+- b/w app servers and cache servers
+- balance based on RR or worker load
+
+Cleanup
+- cron job runs during downtime
+- delete expired link when attempted access
+- after removal add key back to the key-db
+
+Analytics
+- hits
+- user locations
+- updating hot url?
+
+Security & Permissions
+- additional URL field for permission (pub/private) or table for USersIds that can see specific URL
+- works well for wide-column db, key of record is hash and the columns are the userids
