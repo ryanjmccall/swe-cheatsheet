@@ -1,2 +1,59 @@
 
 
+
+...
+
+__Detailed-design__
+
+Use case: Extract txns from account
+When
+- user first links account
+- manual refresh
+- automatically every day for active users
+
+How
+- client requests webserver
+- webserver forwards the request to Accounts API server
+- API server places job in a work Queue (asynchronously)
+- Transaction Extraction Service
+-- runs txn extraction and stores results as raw log files in Object Store
+-- Uses Categorization Service to categorize each txn
+-- Uses Budget Service to calculate aggregate monthly spending by category
+--- Call Notification Service to let users know if they are nearing their budget
+-- Updates SQL transactions table with categorized txns
+-- Updates SQL monthly_spending table with aggregate monthly spending by category
+-- Queue job for Notification Service to notify user txns have completed
+
+`transactions` table
+id int NOT NULL AUTO_INCREMENT
+created_at datetime NOT NULL
+seller varchar(32) NOT NULL
+amount decimal NOT NULL
+user_id int NOT NULL
+PRIMARY KEY(id)
+FOREIGN KEY(user_id) REFERENCES users(id)
+
+index: id, user_id, created_at
+
+`monthly_spending` table
+id int NOT NULL AUTO_INCREMENT
+month_year date NOT NULL
+category varchar(32)
+amount decimal NOT NULL
+user_id int NOT NULL
+PRIMARY KEY(id)
+FOREIGN KEY(user_id) REFERENCES users(id)
+
+index: id, user_id
+
+_Category Service_
+- store seller-to-category hashmap in memory
+- seller name max 255 bytes, 100,000 sellers -> 25.5 MB, easily in memory
+
+Use case: Service recommend budget
+- have a default budget template that could be overridden
+- How to generate monthly_spending table?
+-- run SQL queries on 'transactions'
+-- run MapReduce jobs on txn files to categorize and generate monthly spend by category (saves db)
+
+Scale the Design
