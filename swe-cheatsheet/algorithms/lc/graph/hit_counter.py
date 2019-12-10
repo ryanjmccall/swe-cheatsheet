@@ -1,6 +1,3 @@
-from collections import defaultdict
-
-
 class HitCounter:
 
     def __init__(self):
