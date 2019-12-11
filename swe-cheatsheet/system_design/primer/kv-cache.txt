@@ -1,0 +1,69 @@
+Key-value cache
+- most recent web server queries
+
+1. Requirements
+Use cases
+- User search request hits cache
+- User search request missed cache
+- Service highly available
+
+Assumptions
+- traffic unevenly distributed
+-- popular queries almost always in cache
+-- must determin how to perform cache eviction
+- cache must give fast lookups
+- serve with low latency
+- limited memory in cache
+- 10M users
+- 10B queries / month
+
+2. Estimations
+- Cache entries 
+- key=query, value=results
+-- query=50bytes (50 chars)
+-- title=20bytes?
+-- snippet=200bytes
+-- total=270 bytes
+
+= Total data/mo = 10B queries * 270bytes = 2700GB= 2.7TB
+-- limited memory, how to expire contents?
+- QPS? 10B / (2.6M) == 10,000 / 2.6 ~= 4000 req/s
+
+
+3. High-level design
+DNS
+client > LB >  webserver > query API - document service and reverse index service
+						V
+				      memory cache
+- scaling
+-- DNS
+-- multiple webservers, query apis, reverse index service, document service, memory caches
+
+
+4. Detailed design
+- memory cache
+-- redis or memcached (check for pros and cons)
+- Load latencies: 1MB, from memory=250us, from SSD=1ms, disk=20ms
+- Use LRU eviction policy
+
+- Client requests Web Server running as reverse proxy
+- Web Server forward request to Query API server
+
+- Query API parses query into standard form
+-- rm markup
+-- fix typos case
+-- convert query to Boolean ops
+-- Calls Memory Cache for content matching the query
+-- if hit, update entry's usage to from of linkedlist
+-- else, Reverse Index Service searches docs matchign query, ranks, returns top
+--       Call documnet service to return title and snippets
+--       Update Memory Cache which places entry at from of LRU list
+
+- Cache impl: deque of Nodes each indexed by a hashmap
+- update cache: 1) page contents change, page removed or new page added, page rank changes
+- simpler: TTL cache
+
+How to scale Memory Cache?
+-- each cache machine has own cache => simple but low hit rate
+-- each machine has a cache copy => simple but inefficient use of memory
+-- cache is sharded, complex, but best. use machine_id = consitent_hash(query)
