@@ -7,7 +7,7 @@ class Node():
     def __str__(self):
         return str(self.value)
 
-def valuesAtLevel_(node, depth):
+def valuesAtLevel_my_recur(node, depth):
     res = []
 
     def dfs(n, d):
@@ -23,7 +23,7 @@ def valuesAtLevel_(node, depth):
     return res
 
 
-def valuesAtLevel(node, depth):
+def valuesAtLevel_iter(node, depth):
     res = []
     stk = [(node, 1)] if node else []
     while stk:
@@ -31,13 +31,18 @@ def valuesAtLevel(node, depth):
         if d == depth:
             res.append(cur.value)
             continue
-            
+
         if cur.right:
             stk.append((cur.right, d+1))
         if cur.left:
             stk.append((cur.left, d+1))
 
     return res
+
+def values_recur(node, depth):
+    if not node: return []
+    if depth == 1: return [node.value]
+    return values_recur(node.left, depth - 1) + values_recur(node.right, depth - 1)
 
 
 #    1
@@ -53,6 +58,8 @@ def test():
     node.left.left = Node(4)
     node.left.right = Node(5)
 
-    print(valuesAtLevel(node, 3))
+    print(valuesAtLevel_iter(node, 3))
+    print(values_recur(node, 3))
+    print(valuesAtLevel_my_recur(node, 3))
 
 test()
