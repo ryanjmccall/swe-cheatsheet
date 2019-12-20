@@ -1,4 +1,4 @@
-from collections import defaultdict, namedtuple
+from collections import defaultdict, namedtuple, deque
 from typing import Dict, List, Tuple
 
 """
@@ -97,4 +97,31 @@ def t():
     print(dist)
     print(prev)
 
+    goal = 5
+    print(f'dist to {goal} is {dist[goal]}')
+    cur = goal
+    path = deque([])
+    while cur is not None:
+        path.appendleft(cur)
+        cur = prev[cur]
+    print(f'path to {goal} is {path}')
+
+
 t()
+
+
+def dijkstra_shortest_path(vertices, adj: Dict[int, set], start: int) -> (dict, dict):
+    dist = {v: float('inf') for v in vertices}
+    dist[start] = 0
+    prev = {v: None for v in vertices}
+    q = [v for v in vertices]
+    while q:
+        source = PQueue.extract_min(q)
+        for sink, weight in adj[source]:
+            cost = dist[source] + weight
+            if cost < dist[sink]:
+                dist[sink] = cost
+                prev[sink] = source
+                PQueue.decrease_key(q, sink, cost)
+
+    return dist, prev
