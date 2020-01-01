@@ -10,32 +10,29 @@ LOC: 21
 """
 
 def top_sort(edges: List[Tuple[int, int]]) -> List[int]:
-    graph = defaultdict(list)
+    adj = defaultdict(set)
     indegree = defaultdict(int)
     for u, v in edges:
-        graph[u].append(v)
+        adj[u].add(v)
         indegree[v] += 1
 
     res = []
-    stack = [n for n in graph if indegree[n] == 0]
+    stack = [n for n in adj if indegree[n] == 0]
     while stack:
         cur = stack.pop()
         res.append(cur)
-        for nbr in graph[cur]:
+        for nbr in adj[cur]:
             indegree[nbr] -= 1
             if indegree[nbr] == 0:
                 stack.append(nbr)
 
-    if any(v for v in indegree.values()):
-        return []
-
-    return res
+    return [] if any(v for v in indegree.values()) else res
 
 
-def has_cycle(edges, start: int):
-    graph = defaultdict(list)
+def has_cycle_iter(edges, start: int):
+    adj = defaultdict(list)
     for u, v in edges:
-        graph[u].append(v)
+        adj[u].append(v)
 
     visited = set()
     stk = [start]
@@ -44,26 +41,8 @@ def has_cycle(edges, start: int):
         if cur in visited:
             return True
         visited.add(cur)
-        stk.extend(graph[cur])
+        stk.extend(adj[cur])
     return False
-
-def t_sort(edges):
-    g = defaultdict(set)
-    ind = defaultdict(int)
-    for a, b in edges:
-        g[a].add(b)
-        ind[b] += 1
-
-    res = []
-    stk = [v for v, c in ind.items() if not c]
-    while stk:
-        cur = stk.pop()
-        res.append(cur)
-        for n in g[cur]:
-            ind[n] -= 1
-            if not ind[n]:
-                stk.append(n)
-    return [] if any(c for c in ind.values()) else res
 
 
 def example_edges():
@@ -82,10 +61,10 @@ def cycle_edges():
 
 def test_dfs():
     edges = cycle_edges()
-    assert has_cycle(edges, start=1)
+    assert has_cycle_iter(edges, start=1)
 
     edges = example_edges()
-    assert not has_cycle(edges, start=1)
+    assert not has_cycle_iter(edges, start=1)
 
 
 # test()
