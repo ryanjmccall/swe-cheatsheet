@@ -1,5 +1,5 @@
 from heapq import *
-from typing import Optional
+from typing import Optional, List
 
 
 def kth_largest(arr, k):
@@ -69,3 +69,35 @@ def _partition(arr: list, l: int, r: int) -> int:
 
     arr[i], arr[r] = arr[r], arr[i]
     return i
+
+
+#########
+
+
+def select(arr: List[int], left: int, right: int, k: int):
+    # return the k-th smallest element in O(n) on average O(n^2) worst-case with bad pivots
+    # good pivots yield geometric series of ops: n + n/2 + n/4 + n/8 + ... = 2n = O(n)
+    while left <= right:
+        pivot_index = partition_(arr, left, right)
+        if pivot_index < k:
+            left = pivot_index + 1
+        elif pivot_index > k:
+            right = pivot_index - 1
+        else:
+            return arr[pivot_index]
+
+    return None
+
+
+def partition_(arr, left, right) -> int:
+    pivot_val = arr[right]
+    i = left
+    for j in range(left, right):
+        if arr[j] <= pivot_val:
+            arr[i], arr[j] = arr[j], arr[i]
+            i += 1
+    arr[i], arr[right] = arr[right], arr[i]
+    return i
+
+
+#########
