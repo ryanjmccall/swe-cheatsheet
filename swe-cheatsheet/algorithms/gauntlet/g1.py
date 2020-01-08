@@ -1,5 +1,4 @@
-# Mon Jan 6th, 2019
-
+# Elapsed time: 1 day
 from typing import List, Set, Dict, Tuple
 
 from collections import defaultdict, deque
@@ -295,15 +294,154 @@ def test_trie():
     print(list(trie_matches(root, prefix='bear')))
 
 
-test_trie()
+# test_trie()
 
 
-# - heap
+# min-heap
+# https://runestone.academy/runestone/books/published/pythonds/Trees/BinaryHeapImplementation.html
+class BinaryHeap(object):
+    def __init__(self):
+        self.arr = [0]
 
-# Sorting
-# - mergesort
-# - quicksort
+    @property
+    def size(self) -> int:
+        return len(self.arr) - 1
+
+    def from_list(self, a):
+        self.arr = [0] + a[:]
+        for i in range(len(a) // 2, 0, -1):
+            self._sift_down(i)
+
+    def insert(self, v):
+        self.arr.append(v)
+        self._sift_up(self.size)
+
+    def _sift_up(self, i: int):
+        while i // 2:
+            if self.arr[i // 2] > self.arr[i]:
+                self.arr[i // 2], self.arr[i] = self.arr[i], self.arr[i // 2]
+            i //= 2
+
+    def remove_min(self):
+        res = self.arr[1]
+        self.arr[1] = self.arr.pop()
+        self._sift_down(1)
+        return res
+
+    def _sift_down(self, i: int):
+        while i * 2 <= self.size:
+            min_child = self._min_child(i)
+            if self.arr[i] > self.arr[min_child]:
+                self.arr[i], self.arr[min_child] = self.arr[min_child], self.arr[i]
+            i = min_child
+
+    def _min_child(self, i: int) -> int:
+        left = i * 2
+        right = i * 2 + 1
+        if right > self.size:
+            return left
+        return left if self.arr[left] < self.arr[right] else right
+
 
 # Searching
-# - quickselect
-# - binary search
+# binary search
+class Search(object):
+    def bin_search(self, a: List[int], val: int) -> int:
+        return self._bin_search(a, left=0, right=len(a) - 1, val=val)
+
+    def _bin_search(self, a: List[int], left: int, right: int, val: int) -> int:
+        while left <= right:
+            mid = (left + right) //  2
+            if a[mid] == val:
+                return mid
+            elif a[mid] < val:
+                left = mid + 1
+            else:
+                right = mid - 1
+        return -1
+
+    def quickselect(self, arr: List[int], k: int) -> int:
+        """Find kth largest element in linear time"""
+        k = len(arr) - k
+        left = 0
+        right = len(arr) - 1
+        while left <= right:
+            index = partition(arr, left, right)
+            if index > k:
+                right = index - 1
+            elif index < k:
+                left = index + 1
+            else:
+                return arr[index]
+        return -1
+
+def partition(a, left, right) -> int:
+    pivot = a[right]
+    i = left
+    for j in range(left, right):
+        if a[j] <= pivot:
+            a[i], a[j] = a[j], a[i]
+            i += 1
+    a[i], a[right] = a[right], a[i]
+    return i
+
+
+def test_search():
+    s = Search()
+    a = [1, 2, 3, 4, 5, 6]
+    assert s.bin_search(a, val=5) == 4
+    assert s.bin_search(a, val=1) == 0
+    assert s.bin_search(a, val=2) == 1
+    a = [9, 5, 1, 2, 4, 0]
+    assert s.quickselect(a, k=3) == 4
+    assert s.quickselect(a, k=2) == 5
+    assert s.quickselect(a, k=1) == 9
+    assert s.quickselect(a, k=0) == -1
+
+
+# test_search()
+
+
+# Sorting
+class Sorting(object):
+    def qsort(self, a, left: int, right: int):
+        if left < right:
+            p = partition(a, left, right)
+            self.qsort(a, left, p - 1)
+            self.qsort(a, p + 1, right)
+
+    def mergesort(self, a):
+        if len(a) < 2: return
+        mid = len(a) // 2
+        left = a[:mid]
+        right = a[mid:]
+        self.mergesort(left)
+        self.mergesort(right)
+        i = j = k = 0
+        while i < len(left) and j < len(right):
+            if left[i] < right[j]:
+                a[k] = left[i]
+                i += 1
+            else:
+                a[k] = right[j]
+                j += 1
+            k += 1
+
+        while i < len(left):
+            a[k] = left[i]
+            i += 1
+            k += 1
+
+        while j < len(right):
+            a[k] = right[j]
+            j += 1
+            k += 1
+
+
+def test_sort():
+    myList = [54, 26, 93, 17, 77, 31, 44, 55, 20]
+    Sorting().mergesort(myList)
+    assert myList == [17, 20, 26, 31, 44, 54, 55, 77, 93]
+
+
+test_sort()

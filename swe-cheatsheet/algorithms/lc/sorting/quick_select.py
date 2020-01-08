@@ -2,11 +2,11 @@ from heapq import *
 from typing import Optional, List
 
 
-def kth_largest(arr, k):
+def kth_largest(arr, k):  # O(n * log(n))
     return sorted(arr)[-k]
 
 
-def kth_largest_heap(arr, k):
+def kth_largest_heap(arr, k):  # O(n + k * log(n))
     return nlargest(k, arr)[-1]
 
 
