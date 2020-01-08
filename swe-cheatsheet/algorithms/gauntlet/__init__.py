@@ -4,26 +4,26 @@ commonly employed by coding question solutions,
 written succintly in Python.
 """
 
-# Graph
-# - bfs iter
-# - dfs recur
-# - dfs iter
-# - topological sort
-# - cycle detection (recur & top)
-# - dijkstra
+# _Graph_
+# bfs iter
+# dfs recur
+# dfs iter
+# topological sort
+# cycle detection (recur & top)
+# dijkstra
 
-# Tree
-# - inorder, preorder, postorder recursively
-# - inorder, preorder, postorder iteratively
+# _Tree_
+# inorder, preorder, postorder recursively
+# inorder, preorder, postorder iteratively
 
-# - trie (works for hay, haywood)
+# trie (works for hay, haywood)
 
-# - heap
+# heap
 
-# Sorting
-# - mergesort
-# - quicksort
+# _Sorting_
+# mergesort
+# quicksort
 
-# Searching
-# - quickselect
-# - binary search
+# _Searching_
+# quickselect
+# binary search

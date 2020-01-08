@@ -6,10 +6,9 @@ Using a priority queue
 A min-priority queue is an abstract data type that provides 3 basic operations : 
 add_with_priority(), decrease_priority() and extract_min(). As mentioned earlier, 
 using such a data structure can lead to faster computing times than using a basic queue.
- Notably, Fibonacci heap (Fredman & Tarjan 1984) or Brodal queue offer optimal 
- implementations for those 3 operations.  
+Notably, Fibonacci heap (Fredman & Tarjan 1984) or Brodal queue offer optimal implementations 
+for those 3 operations.  
 """
-
 
 
 Edge = namedtuple('Edge', ['sink', 'weight'])

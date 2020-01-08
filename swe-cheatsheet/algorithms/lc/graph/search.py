@@ -29,29 +29,16 @@ class Search(object):
 
         return order
 
-    def dfs_paths(self, g, start, goal):
-        stack = [(start, [start])]
-        visited = set()
-        while stack:
-            vertex, path = stack.pop()
-            if vertex not in visited:
-                if vertex == goal:
-                    return path
-                visited.add(vertex)
-                for n in g[vertex] - visited:
-                    stack.append((n, path + [n]))
-
-
-    def path(self, g, start, goal):
+    def dfs_path(self, g, start, goal):
         if not start: return []
         stk = [(start, [start])]
-        visit = set()
+        visited = set()
         while stk:
             cur, path = stk.pop()
             if cur == goal:
                 return path
-            visit.add(cur)
-            for n in g[cur] - visit:
+            visited.add(cur)
+            for n in g[cur] - visited:
                 stk.append((n, path + [n]))
 
         return []
@@ -72,10 +59,10 @@ def t():
     s = Search()
     # print(s.dfs(g, 1))
     # print(s.bfs(g, 1))
-    print(s.path(g, 1, 8))
-    print(s.path(g, 8, 8))
-    print(s.path(g, 8, 5))
-    print(s.path(g, 1, 55))
+    print(s.dfs_path(g, 1, 8))
+    print(s.dfs_path(g, 8, 8))
+    print(s.dfs_path(g, 8, 5))
+    print(s.dfs_path(g, 1, 55))
 
 
 t()
