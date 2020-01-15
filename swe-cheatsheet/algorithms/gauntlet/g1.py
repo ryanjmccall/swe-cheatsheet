@@ -90,7 +90,7 @@ def graph_cycle_recur(g) -> bool:
         visited.remove(node)
         return False
 
-    return any(dfs(v) for v in g)
+    return any(dfs(v) for v in g if v not in visited)
 
 
 def graph_path(g, start: int, goal: int) -> List[int]:
