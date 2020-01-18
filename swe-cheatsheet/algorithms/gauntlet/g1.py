@@ -288,13 +288,11 @@ def trie_matches(root: TrieNode, prefix: str) -> List[str]:
         stk.extend((child, pref + c) for c, child in cur.children.items())
 
 
+# test_trie()
 def test_trie():
     words = ['be', 'bear', 'bears', 'bearable', 'barney']
     root = build_trie(words)
     print(list(trie_matches(root, prefix='bear')))
-
-
-# test_trie()
 
 
 # min-heap

@@ -275,10 +275,66 @@ def trie_matches(root: TrieNode, prefix: str) -> List[str]:
         stk.extend((child, pre + c) for c, child in cur.children.items())
 
 # heap
+class BinaryHeap(object):
+    def __init__(self):
+        self.a = [0]
+
+    @property
+    def size(self) -> int:
+        return len(self.a) - 1
+
+    def from_list(self, a):
+        self.a = [0] + list(a)
+        for i in range(len(a) // 2, 0, -1):  # sift down working bottom up
+            self.sift_down(i)
+
+    def insert(self, v):
+        self.a.append(v)
+        self.sift_up(i=self.size)
+
+    def remove_min(self):
+        r = self.a[1]
+        self.a[1] = self.a.pop()
+        self.sift_down(1)
+        return r
 
 # _Searching_
-# quickselect
-# binary search
+# quickselect unsorted array
+def quickselect(a: List[int], target: int) -> int:
+    target = len(a) - target
+    left = 0
+    right = len(a) - 1
+    while left < right:
+        index = partition(a, left, right)
+        val = a[index]
+        if val < target:
+            left = index + 1
+        elif val > target:
+            right = index - 1
+        else:
+            return index
+    return -1
+
+
+# binary search sorted array
+def binary_search(a: List[int], target: int) -> int:
+    left = 0
+    right = len(a) - 1
+    while left < right:
+        mid = (left + right) // 2
+        val = a[mid]
+        if val < target:
+            left = mid + 1
+        elif val > target:
+            right = mid - 1
+        else:
+            return mid
+
+    return -1
+
+
+print(binary_search([1, 1, 1, 1, 2, 3, 4, 5, 5], 4))
+
 
 def partition(a, left, right) -> int:
     pivot = a[right]
