@@ -2,15 +2,21 @@ from typing import List
 
 
 class Solution:
+    # given l, r assume l complete, then try adding all possible chars in r to l
+    # given left, abcdef, try:
+    # left + a, bcdef
+    # left + b, acdef
+    # left + c, abdef
     def permute_recur(self, nums: List[int]) -> List[List[int]]:
         result = []
 
         def helper(left: list, right: list):
             if len(right) <= 1:
                 result.append(left + right)
-            else:
-                for i, item in enumerate(right):
-                    helper(left + [item], right[:i] + right[i + 1:])
+                return
+
+            for i, item in enumerate(right):
+                helper(left + [item], right[:i] + right[i + 1:])
 
         helper([], nums)
         return result

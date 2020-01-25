@@ -1,7 +1,7 @@
 from collections import defaultdict, deque
 
 # _Graph_
-from typing import List, Iterable, Optional
+from typing import List, Iterable, Optional, Dict
 
 
 def sample_graph():
@@ -283,20 +283,42 @@ class BinaryHeap(object):
     def size(self) -> int:
         return len(self.a) - 1
 
+    def insert(self, v):
+        self.a.append(v)
+        self._sift_up(i=self.size)
+
+    def _sift_up(self, i: int):
+        while i // 2:
+            par = i // 2
+            if self.a[par] > self.a[i]:
+                self.a[par], self.a[i] = self.a[i], self.a[par]
+            i //= 2
+
     def from_list(self, a):
         self.a = [0] + list(a)
         for i in range(len(a) // 2, 0, -1):  # sift down working bottom up
-            self.sift_down(i)
-
-    def insert(self, v):
-        self.a.append(v)
-        self.sift_up(i=self.size)
+            self._sift_down(i)
 
     def remove_min(self):
         r = self.a[1]
         self.a[1] = self.a.pop()
-        self.sift_down(1)
+        self._sift_down(1)
         return r
+
+    def _sift_down(self, i: int):
+        while i * 2 <= self.size:
+            min_child = self._min_child(i)
+            if self.a[i] > self.a[min_child]:
+                self.a[i], self.a[min_child] = self.a[min_child], self.a[i]
+            i = min_child
+
+    def _min_child(self, i: int) -> int:
+        left = i * 2
+        right = left + 1
+        if right > self.size:
+            return left
+        return left if self.a[left] < self.a[right] else right
+
 
 # _Searching_
 # quickselect unsorted array
@@ -333,7 +355,7 @@ def binary_search(a: List[int], target: int) -> int:
     return -1
 
 
-print(binary_search([1, 1, 1, 1, 2, 3, 4, 5, 5], 4))
+# print(binary_search([1, 1, 1, 1, 2, 3, 4, 5, 5], 4))
 
 
 def partition(a, left, right) -> int:
@@ -392,4 +414,59 @@ def test_sort():
     assert myList == [17, 20, 26, 31, 44, 54, 55, 77, 93]
 
 
-test_sort()
+class Permutation:
+    # idea given left (completed), right (pending), how to add from right?
+    # loop over right and gen all possibilities
+    def permute_recur(self, vals):
+        if not vals: return []
+        res = []
+
+        def dfs(left, right):
+            if not right:
+                res.append(left)
+                return
+
+            for i, v in enumerate(right):  # for each v, maintain everything else in the right
+                dfs(left=left + [v], right=right[:i] + right[i+1:])
+
+        dfs(left=[], right=vals)
+        return res
+
+    def permute_iter(self, vals):
+        if not vals: return []
+        stack = [([], vals)]
+        for left, right in stack:
+            for i, v in enumerate(right):
+                remain = right[:i] + right[i + 1:]
+                if remain:
+                    stack.append((left + [v], remain))
+                else:
+                    yield left + [v]
+
+class Combination:
+    def combos_recur_gen(self, left: list, right: list):
+        for i, v in enumerate(right):
+            yield left + [v]
+            yield from self.combos_recur_gen(left + [v], right[i + 1:])
+
+    def combos_iter_gen(self, vals):  # This is amazing
+        stack = [([], vals)]
+        for left, right in stack:
+            for i, v in enumerate(right):
+                yield left + [v]
+                stack.append((left + [v], right[i + 1:]))
+
+def t():
+    combo = Combination()
+    # res = combo.combos_recur_gen(left=[], right=list('1234'))
+    # print('\n'.join(''.join(c) for c in res))
+    print()
+    res = combo.combos_iter_gen(vals=list('1234'))
+    print('\n'.join(''.join(c) for c in res))
+
+
+t()
+
+
+# print(Permutation().permute_recur(vals=[3, 4, 5]))
+print(list(Permutation().permute_iter(vals=[3, 2])))

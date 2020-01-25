@@ -41,6 +41,6 @@ class LRUCache:
             self._ll_remove(lru)
             del self.d[lru.key]
 
-        n = Node(k, v)  # wasteful 
+        n = Node(k, v)  # wasteful
         self._ll_add(n)
         self.d[k] = n

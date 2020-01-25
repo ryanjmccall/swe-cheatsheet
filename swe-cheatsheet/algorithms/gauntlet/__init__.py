@@ -67,3 +67,5 @@ def test_tree():
 # _Searching_
 # quickselect
 # binary search
+
+# permutations & combinations
