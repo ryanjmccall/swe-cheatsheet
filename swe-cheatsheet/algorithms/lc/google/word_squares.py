@@ -12,8 +12,8 @@ def get_permutations(arr):
     return res
 
 
-class Solution(object):
-    def wordSquares(self, words: List[str]) -> List[List[str]]:
+class Solution1(object):
+    def wordSquares1(self, words: List[str]) -> List[List[str]]:
         return [perm for perm in get_permutations(words) if self.is_word_square(perm)]
 
     def is_word_square(self, words) -> bool:
@@ -24,7 +24,30 @@ class Solution(object):
 
         return True
 
+    def wordSquares(self, words):
+        if not words: return []
+        self.words = words
+        self.n = len(words[0])
+        res = []
+        for w in words:
+            self.dfs(index=1, square=[w], results=res)
+        return res
 
-x = ["area","lead","wall","lady","ball"]
-# x = ['ball', 'area', 'lead', 'lady']
-print(Solution().wordSquares(x))
+    def dfs(self, index, square, results):
+        if index == self.n:
+            results.append(square[:])
+            return
+
+        pre = ''.join(w[index] for w in square)  # TODO can't this be passed in?
+        for w in self._words_starting_with(pre):
+            square.append(w)
+            self.dfs(index + 1, square, results)
+            square.pop()
+
+    def _words_starting_with(self, prefix):
+        return [w for w in self.words if w.startswith(prefix)]
+
+
+# x = ["area","lead","wall","lady","ball"]
+x = ['area', 'lead', 'ball', 'lady']
+print(Solution1().wordSquares(x))
