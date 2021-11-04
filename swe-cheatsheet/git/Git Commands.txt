@@ -1,10 +1,16 @@
 Git Commands
 
 --Aliases--
-$ git config --global alias.co checkout
-$ git config --global alias.br branch
-$ git config --global alias.ci commit
-$ git config --global alias.st status
+git config --global alias.co checkout
+git config --global alias.br branch
+git config --global alias.ci commit
+git config --global alias.st status
+
+--Token--
+save token
+git config --global credential.helper cache
+clear token
+git config --global --unset credential.helper
 
 --Setup Process--
 Fork from web UI
