@@ -52,7 +52,6 @@ def _dfs(g, n, res, visited: set):
         _dfs(g, nbr, res, visited)
 
 
-
 # print(list(graph_recur(sample_graph(), start=1)))
 
 
@@ -455,6 +454,7 @@ class Combination:
             for i, v in enumerate(right):
                 yield left + [v]
                 stack.append((left + [v], right[i + 1:]))
+
 
 def t():
     combo = Combination()

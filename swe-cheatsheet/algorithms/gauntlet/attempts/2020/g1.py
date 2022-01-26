@@ -147,6 +147,7 @@ class TreeNode(object):
     def __init__(self, v):
         self.val = v
         self.left = self.right = None
+
     def __str__(self) -> str:
         return str(self.val)
 
