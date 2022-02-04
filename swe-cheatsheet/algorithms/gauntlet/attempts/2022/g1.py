@@ -3,7 +3,7 @@ The Gauntlet is a set of coding tasks for algorithms commonly used in coding que
 written succintly in Python.
 """
 
-from typing import List, Dict
+from typing import List, Dict, Iterable, Generator
 
 
 ### Section 0. Linked List
@@ -151,7 +151,7 @@ def test_dfs_iter():
 
 # test_dfs_iter()
 
-def dfs(root, g):
+def dfs_recur(root, g):
     visited = set()
     result = []
 
@@ -170,7 +170,7 @@ def dfs(root, g):
 
 def test_dfs():
     g = sample_dag()
-    itr = dfs(1, g)
+    itr = dfs_recur(1, g)
     print(itr)
 
 
@@ -203,7 +203,48 @@ def has_cycle_topo(g) -> bool:
 
 assert has_cycle_topo(sample_cycle())
 
+
 # cycle detection using recursion
+def has_cycle_recur(g) -> bool:
+    visited = set()
+
+    def dfs(n: int):
+        visited.add(n)
+        for e in g[n]:
+            if e in visited or dfs(e):
+                return True
+
+        visited.remove(n)
+        return False
+
+    return any(dfs(v) for v in g if v not in visited)
+
+
+# graph path to value
+def graph_path(g, start: int, goal: int) -> List[int]:
+    visited = set()
+    path = []
+
+    def dfs(n: int):
+        visited.add(n)
+        path.append(n)
+
+        if n == goal:
+            return path
+
+        for v in g[n] - visited:
+            sub = dfs(v)
+            if sub is not None:
+                return sub
+
+        visited.remove(n)
+        path.pop()
+        return None
+
+    return dfs(start)
+
+
+assert graph_path(g=sample_dag(), start=1, goal=5) == [1, 4, 5]
 
 
 # dijkstra's algo
@@ -212,43 +253,99 @@ assert has_cycle_topo(sample_cycle())
 ### Section 2. Tree algorithms
 
 # TODO create the fundamental tree datastructure
+class Node(object):
+    def __init__(self, val: int, left: 'Node' = None, right: 'Node' = None):
+        self.val = val
+        self.left = left
+        self.right = right
+
 
 def sample_tree():
-    #  1
-    # / \
+    #   1
+    #  / \
     # 2   3
-    #   / \
-    #  4*  5
-    # a = Node(1)
-    # a.left = Node(2)
-    # a.right = Node(3)
-    # a.right.left = Node(4)
-    # a.right.right = Node(5)
-    #
-    # b = Node(1)
-    # b.left = Node(2)
-    # b.right = Node(3)
-    # b.right.left = Node(4)
-    # b.right.right = Node(5)
-    pass
+    #    / \
+    #   4   5
+    a = Node(1)
+    a.left = Node(2)
+    a.right = Node(3)
+    a.right.left = Node(4)
+    a.right.right = Node(5)
 
-# what is preorder?
+    b = Node(1)
+    b.left = Node(2)
+    b.right = Node(3)
+    b.right.left = Node(4)
+    b.right.right = Node(5)
 
-# what is inorder?
+# what is preorder? visit root before l, r: root > left > right
 
-# what is postorder?
+# what is inorder? visit root b/w l, r: left > root > right
 
-# inorder recur
+# what is postorder? visit root after l, r: left > right > root
+
 
 # preorder recur
+def preorder_recur(n: Node) -> Generator[Node, None, None]:
+    if not n:
+        return
+    yield n.val
+    if n.left:
+        yield from preorder_recur(n.left)
+    if n.right:
+        yield from preorder_recur(n.right)
+
+
+# inorder recur
+def inorder_recur(n: Node) -> Generator[Node, None, None]:
+    if not n:
+        return
+    if n.left:
+        yield from inorder_recur(n.left)
+    yield n.val
+    if n.right:
+        yield from inorder_recur(n.right)
+
 
 # postorder recur
+def postorder_recur(n: Node) -> Generator[Node, None, None]:
+    if n.left:
+        yield from postorder_recur(n.left)
+    if n.right:
+        yield from postorder_recur(n.right)
+    yield from n.val
 
-# inorder iter
 
 # preorder iter
+def preorder_iter(n: Node) -> Generator[Node, None, None]:
+    stk = [n]
+    while stk:
+        cur = stk.pop()
+        yield cur.val
+        if cur.right:
+            stk.append(cur.right)
+        if cur.left:
+            stk.append(cur.left)
+
+
+# inorder iter
+def inorder_iter(n: Node) -> Generator[Node, None, None]:
+    stk = []
+    cur = n
+    while stk or cur:
+        if cur:
+            # skip visiting cur until left fully explored
+            stk.append(cur)
+            cur = cur.left
+            continue
+
+        cur = stk.pop()
+        yield cur.val
+        cur = cur.right
+
 
 # postorder iter
+
 
 ### Section 3. Retrieval tree / trie
 # must work for 'hi' and 'higher'

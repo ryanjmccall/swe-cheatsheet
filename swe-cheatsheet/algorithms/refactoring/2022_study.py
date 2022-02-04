@@ -19,7 +19,7 @@ Do's
 - generators
 - any/all instead of loops
 - minimize code in loops
-- guard statement / short circuiting to simplify remove else's
+- guard statement / short-circuiting to simplify remove else's
 - use decorators to replace repeated A-C in A>B>C
 - use @dataclass
 - extract / hoist repeated statements

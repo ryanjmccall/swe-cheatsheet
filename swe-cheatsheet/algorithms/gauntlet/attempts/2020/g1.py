@@ -81,6 +81,7 @@ def has_cycle(g) -> bool:
 
 def graph_cycle_recur(g) -> bool:
     visited = set()
+
     def dfs(node: int):
         visited.add(node)
         for nbr in g[node]:
