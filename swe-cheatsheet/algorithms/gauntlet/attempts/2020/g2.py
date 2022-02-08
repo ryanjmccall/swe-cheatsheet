@@ -273,6 +273,7 @@ def trie_matches(root: TrieNode, prefix: str) -> List[str]:
             yield pre
         stk.extend((child, pre + c) for c, child in cur.children.items())
 
+
 # heap
 class BinaryHeap(object):
     def __init__(self):

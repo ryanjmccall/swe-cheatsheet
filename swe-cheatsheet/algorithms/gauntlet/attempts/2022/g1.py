@@ -252,7 +252,6 @@ assert graph_path(g=sample_dag(), start=1, goal=5) == [1, 4, 5]
 
 ### Section 2. Tree algorithms
 
-# TODO create the fundamental tree datastructure
 class Node(object):
     def __init__(self, val: int, left: 'Node' = None, right: 'Node' = None):
         self.val = val
@@ -345,10 +344,90 @@ def inorder_iter(n: Node) -> Generator[Node, None, None]:
 
 
 # postorder iter
+def postorder_iter(n: Node) -> Generator[Node, None, None]:
+    stk = []
+    cur = n
+    last = None
+    while stk or cur:
+        if cur:
+            stk.append(cur)
+            cur = cur.left
+        else:
+            peek = stk[-1]
+            if peek.right and peek.right != last:
+                cur = peek.right
+            else:
+                last = stk.pop()
+                yield last.val
 
+
+def test_tree():
+    #  1
+    # / \
+    # 2   3
+    #   / \
+    #  4*  5
+    a = Node(1)
+    a.left = Node(2)
+    a.right = Node(3)
+    a.right.left = Node(4)
+    a.right.right = Node(5)
+
+    b = Node(1)
+    b.left = Node(2)
+    b.right = Node(3)
+    b.right.left = Node(4)
+    b.right.right = Node(5)
+
+    print(list(preorder_recur(a)))
+    print(list(preorder_iter(a)))
+
+
+# test_tree()
 
 ### Section 3. Retrieval tree / trie
 # must work for 'hi' and 'higher'
+
+
+class TrieNode(object):
+    def __init__(self):
+        self.terminal = False
+        self.children = dict()  # type: Dict[str, TrieNode]
+
+
+class Trie(object):
+    def __init__(self, words: List[str]):
+        self.root = TrieNode()
+        for w in words:
+            cur = self.root
+            for c in w:
+                if c not in cur.children:
+                    cur.children[c] = TrieNode()
+                cur = cur.children[c]
+            cur.terminal = True
+
+    def matches(self, prefix: str) -> Generator[str, None, None]:
+        cur = self.root
+        for c in prefix:
+            if c not in cur.children:
+                return
+            cur = cur.children[c]
+
+        stk = [(cur, prefix)]
+        while stk:
+            cur, pre = stk.pop()
+            if cur.terminal:
+                yield pre
+            stk.extend(((child, pre + char) for char, child in cur.children.items()))
+
+
+def test_trie():
+    t = Trie(words=['cat', 'car', 'dog'])
+    for pre in ('ca', 'd', 'zz'):
+        print(list(t.matches(pre)))
+
+
+# test_trie()
 
 # code build_trie
 
@@ -356,16 +435,134 @@ def inorder_iter(n: Node) -> Generator[Node, None, None]:
 
 ### Section 4. Binary heap
 # methods: insert, remove_min
+class BinaryHeap(object):
+    def __init__(self):
+        self.a = [0]
+
+    @property
+    def size(self) -> int:
+        return len(self.a) - 1
+
+    def insert(self, v):
+        self.a.append(v)
+        self._sift_up(i=self.size)
+
+    def _sift_up(self, i: int):
+        while i // 2:
+            par = i // 2
+            if self.a[par] > self.a[i]:
+                self.a[par], self.a[i] = self.a[i], self.a[par]
+            i //= 2
+
+    def from_list(self, a):
+        self.a = [0] + list(a)
+        for i in range(len(a) // 2, 0, -1):  # sift down working bottom up
+            self._sift_down(i)
+
+    def remove_min(self):
+        r = self.a[1]
+        self.a[1] = self.a.pop()
+        self._sift_down(1)
+        return r
+
+    def _sift_down(self, i: int):
+        while i * 2 <= self.size:
+            min_child = self._min_child(i)
+            if self.a[i] > self.a[min_child]:
+                self.a[i], self.a[min_child] = self.a[min_child], self.a[i]
+            i = min_child
+
+    def _min_child(self, i: int) -> int:
+        left = i * 2
+        right = left + 1
+        if right > self.size:
+            return left
+        return left if self.a[left] < self.a[right] else right
 
 
 ### Section 5. Searching
+def partition(a, left, right) -> int:
+    """Select a pivot value and then partitions array between left and right based on pivot"""
+    pivot = a[right]
+    i = left
+    for j in range(left, right):
+        if a[j] <= pivot:
+            a[i], a[j] = a[j], a[i]
+            i += 1
+    a[i], a[right] = a[right], a[i]
+    return i
+
+
 # quickselect
+def quickselect(a: List[int], target: int) -> int:
+    # find the target element in an unordered list
+    target = len(a) - target
+    left = 0
+    right = len(a) - 1
+    while left < right:
+        index = partition(a, left, right)
+        val = a[index]
+        if val < target:
+            left = index + 1
+        elif val > target:
+            right = index - 1
+        else:
+            return index
+    return -1
+
 
 # binary search
+def binary_search(a, target: int) -> int:
+    l, r = 0, len(a) - 1
+    while l < r:
+        mid = (l + r) // 2
+        if a[mid] < target:
+            l = mid + 1
+        elif a[mid] > target:
+            r = mid - 1
+        else:
+            return mid
+    return -1
 
 # print(binary_search([1, 1, 1, 1, 2, 3, 4, 5, 5], 4))
 
 ### Section 6. Sorting
+
+
+class Sort(object):
+    @classmethod
+    def qsort(cls, a, left: int, right: int):
+        if left < right:
+            i = partition(a, left, right)
+            cls.qsort(a, left, i - 1)
+            cls.qsort(a, i + 1, right)
+
+    @classmethod
+    def mergesort(cls, a):
+        if len(a) <= 1:
+            return
+        mid = len(a) // 2
+        left, right = a[:mid], a[mid:]
+        cls.mergesort(left)
+        cls.mergesort(right)
+        i, j, k = 0, 0, 0
+        while i < len(left) and j < len(right):
+            if left[i] < right[j]:
+                a[k] = left[i]
+                i += 1
+            else:
+                a[k] = right[j]
+                j += 1
+            k += 1
+
+        while i < len(left):
+            a[k] = left[i]
+            i += 1
+            k += 1
+        while j < len(right):
+            a[k] = right[j]
+            j += 1
+            k += 1
 
 # mergesort
 
@@ -375,7 +572,7 @@ def inorder_iter(n: Node) -> Generator[Node, None, None]:
 
 def test_sort():
     myList = [54, 26, 93, 17, 77, 31, 44, 55, 20]
-    # TODO
+    Sort().mergesort(myList)
     assert myList == [17, 20, 26, 31, 44, 54, 55, 77, 93]
 
 ### Section 7. Ordered Dict / LRU cache
@@ -390,14 +587,71 @@ def test_sort():
 
 # permutation iter
 
+class Permutation(object):
+    def permute_recur(self, vals):
+        if not vals:
+            return []
+        res = []
+
+        def dfs(left, right):
+            # given left/completed, right/pending, how to add from right
+            if not right:
+                res.append(left)
+                return
+
+            for i, v in enumerate(right):
+                dfs(left=left + [v], right=right[:i] + right[i+1:])
+
+        dfs([], vals)
+        return res
+
+    def permute_iter(self, vals):
+        if not vals:
+            return []
+        stk = [([], vals)]
+        for l, r in stk:
+            for i, v in enumerate(r):
+                remain = r[:i] + r[i+1:]
+                if remain:
+                    stk.append((l + [v], remain))
+                else:
+                    yield l + [v]
+
 
 def test_permutations():
     vals = [3, 4, 5]
+    print(Permutation().permute_recur(vals))
+    print(list(Permutation().permute_iter(vals)))
+
+
+test_permutations()
+
 
 # combination recur
 
 # combination iter
 
+class Combination:
+    def combos_recur(self, left: list, right: list):
+        for i, v in enumerate(right):
+            yield left + [v]
+            yield from self.combos_recur(left + [v], right[i+1:])
+
+    def combos_iter(self, vals):
+        stk = [([], vals)]
+        for l, r in stk:
+            for i, v in enumerate(r):
+                yield l + [v]
+                stk.append((l + [v], r[i+1:]))
+
 
 def test_combos():
-    vals = list('1234')
+    combo = Combination()
+    res = combo.combos_recur(left=[], right=list('1234'))
+    print('\n'.join(''.join(c) for c in res))
+    print()
+    res = combo.combos_iter(vals=list('1234'))
+    print('\n'.join(''.join(c) for c in res))
+
+
+test_combos()
