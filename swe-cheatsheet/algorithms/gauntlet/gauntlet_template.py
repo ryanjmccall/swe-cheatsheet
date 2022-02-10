@@ -103,6 +103,8 @@ def sample_tree():
 
 # postorder iter
 
+# create BST from an array
+
 ### Section 3. Retrieval tree / trie
 # must work for 'hi' and 'higher'
 

@@ -3,7 +3,7 @@ The Gauntlet is a set of coding tasks for algorithms commonly used in coding que
 written succintly in Python.
 """
 
-from typing import List, Dict, Iterable, Generator
+from typing import List, Dict, Iterable, Generator, Any
 
 
 ### Section 0. Linked List
@@ -385,6 +385,15 @@ def test_tree():
 
 # test_tree()
 
+def to_bst(a: List[int]):
+    if not a:
+        return None
+
+    mid = len(a) // 2
+    root = Node(a[mid])
+    root.l, root.r = to_bst(a[:mid]), to_bst(a[mid+1:])
+    return root
+
 ### Section 3. Retrieval tree / trie
 # must work for 'hi' and 'higher'
 
@@ -581,6 +590,73 @@ def test_sort():
 
 # implement ordered dict using dict
 
+
+class DoubleNode(object):
+    def __init__(self, k, v, prev=None, next=None):
+        self.k = k
+        self.v = v
+        self.prev = prev
+        self.next = next
+
+
+class OrderedDict(object):
+    # -> head  ->   tail ->  (default LIFO)
+    def __init__(self):
+        self.d = dict()  # type: Dict[Any, DoubleNode]
+        self.head = None
+        self.tail = None
+
+    def set(self, k, v):
+        if k not in self.d:
+            self.d[k] = DoubleNode(k, v)
+            if not self.head:
+                self.head = self.d[k]
+            if not self.tail:
+                self.tail = self.d[k]
+        else:
+            self.d[k].v = v
+        self.move_to_end(k, last=False)  # move to front
+
+    def get(self, k):
+        return self.d[k].v
+
+    def popitem(self, last: bool = True):
+        if not self.d:
+            return
+
+        result = self.tail if last else self.head
+        del self.d[result.k]
+        if last:
+            self.tail, self.tail.prev = self.tail.prev, None
+            self.tail.next = None
+        else:
+            self.head, self.head.next = self.head.next, None
+            self.head.prev = None
+
+        return result
+
+    def move_to_end(self, k, last: bool = True):
+        node = self.d[k]
+        # remove node from linked list
+        if node.prev:
+            node.prev.next = node.next
+        if node.next:
+            node.next.prev = node.prev
+
+        node.next = None
+        node.prev = None
+
+        # then add node to head or tail
+        if last:
+            self.tail.next = node
+            node.prev = self.tail
+            self.tail = node
+        else:
+            self.head.prev = node
+            node.next = self.head
+            self.head = node
+
+
 ### Section 8. combinatorics
 
 # permutation recur
@@ -624,7 +700,7 @@ def test_permutations():
     print(list(Permutation().permute_iter(vals)))
 
 
-test_permutations()
+# test_permutations()
 
 
 # combination recur
@@ -654,4 +730,4 @@ def test_combos():
     print('\n'.join(''.join(c) for c in res))
 
 
-test_combos()
+# test_combos()

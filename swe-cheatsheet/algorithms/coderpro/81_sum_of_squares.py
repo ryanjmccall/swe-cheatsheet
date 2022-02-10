@@ -28,11 +28,14 @@ def square_sums(n):
     for i in range(n + 1):
         for s in squares:
             val = i + s
-            print(min_sums)
+            # print(min_sums)
             if val < len(min_sums):
                 min_sums[val] = min(min_sums[val], min_sums[i] + 1)
+            else:
+                break
 
     return min_sums[-1]
 
 
-print(square_sums(13))
+print(square_sums(13))  # 2
+print(square_sums(52))  # 2
