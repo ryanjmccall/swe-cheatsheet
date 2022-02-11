@@ -6,31 +6,18 @@ written succintly in Python.
 from typing import List
 
 
-### Section 0. Linked List
+### Section 0. Doubly Linked List
+# prepend, append, remove methods
 
-# define datastructure
-
-# create
-
-# traverse
-
-# prepend
-
-# append
-
-# insert
-
-# remove
 
 ### Section 1. Graph algorithms
 
 
 def get_adjacency_list(edges):
-    # TODO: given a set of edges construct a graph
-    pass
+    return {}
 
 
-def sample_dag() -> List[tuple]:
+def sample_dag() -> dict:
     """
     1 > 2 > (6, 7, 8)
     1 > 3
@@ -45,16 +32,15 @@ def sample_dcg():
     return get_adjacency_list(edges=[(0, 1), (1, 2), (2, 3), (3, 1)])
 
 
-# bfs iter
+# bfs_iter
 
-# dfs recur
+# dfs_recur
 
-# dfs iter
-
-# topological sort
+# dfs_iter
 
 # cycle detection using recursion
 
+# bonus: topological sort
 # cycle detection using top sort
 
 # graph path to value

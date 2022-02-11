@@ -244,6 +244,7 @@ def graph_path(g, start: int, goal: int) -> List[int]:
     return dfs(start)
 
 
+
 assert graph_path(g=sample_dag(), start=1, goal=5) == [1, 4, 5]
 
 
