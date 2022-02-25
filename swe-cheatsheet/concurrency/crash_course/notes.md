@@ -88,7 +88,14 @@ binary semaphore vs mutex
 
 Condition variables
 - object with wait and notify/signal methdos
-- wait() > caller sent to wait queue
+- wait() > caller sent to wait queue, thread sleeps and give up resources
+- notify() > invoked when a condition becomes true and the invoking threads want to inform the waiting threads to continue
+- lock must be acquired before waiting/notifying
+```
+cond = Condition(Lock())  # or Condition()
+cond.acquire()
+cond.wait()
+```
 
 Monitor
 - mutex and one or more condition variables
@@ -115,3 +122,8 @@ Daemon Thread
 - runs in the background, program may exit if the daemon thread is still not finished, but python program
 will wait for non-daemon
 - daemons are shut down abruptly so open resources would not be closed properly
+
+
+
+
+
