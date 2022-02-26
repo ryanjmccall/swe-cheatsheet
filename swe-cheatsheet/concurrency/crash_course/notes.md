@@ -123,7 +123,31 @@ Daemon Thread
 will wait for non-daemon
 - daemons are shut down abruptly so open resources would not be closed properly
 
+Semaphore
+- atomic counter that's decremented when acquire() (blocking) and incremented when release()
+- sem = Semaphore(5)
 
+Event
+- convenience class and wrapper over a condition variable with a Boolean predicate
+- most common setup for many cooperating threads where two or more threads coordinate among themselves on a Boolean
+- semaphore can be incremented multiple times, while an event has a Boolean state
+- thread never blocks on wait() of an event object if the internal flag is set to true no matter how many times the thread
+invokes wait()
+
+Timer
+- allows execution of a callable after a certain amount of time has passed
+
+Barrier
+- x number of threads must wait before passing the barrier, the barrier can be aborted
+- barrier can call a function on release
+
+With
+- with my_lock:
+
+## Multiprocessing
+- set_start_method()
+-- fork, spawn, fork-server
+- fork: default
 
 
 
