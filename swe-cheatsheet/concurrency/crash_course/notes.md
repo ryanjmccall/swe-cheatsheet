@@ -145,9 +145,31 @@ With
 - with my_lock:
 
 ## Multiprocessing
-- set_start_method()
--- fork, spawn, fork-server
-- fork: default
+- set_start_method() to specify how new processes are started:
+  - fork
+  - spawn
+  - fork-server
+  
+- Unix system call
+  - fork and exec
+  - Python uses os.fork()
+  - fork create child with identical copies of the datastructures and file descriptors of the parent (problematic)
 
+- Forking in Python
+  - create new python interpreter with own GIL
+  - forking and multithreading dont mix well
 
+- Spawn
+  - fork followed by exec
+  - module state isn't inherited by child
+  - slower than forking
+  - imports are reimported but not for fork
 
+- forkserver
+  - brand new single-threaded process called 'server' is started
+  - parent requests server fork a new process
+
+- IPC
+  - Queues: Simple, Queue, Joinable Queue
+    - elements must be picklable
+  - Pipes: twoway comm b/w processes but only one can write at a time

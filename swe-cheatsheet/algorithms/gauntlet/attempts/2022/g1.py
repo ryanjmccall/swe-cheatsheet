@@ -683,16 +683,11 @@ class Permutation(object):
         return res
 
     def permute_iter(self, vals):
-        if not vals:
-            return []
-        stk = [([], vals)]
-        for l, r in stk:
-            for i, v in enumerate(r):
-                remain = r[:i] + r[i+1:]
-                if remain:
-                    stk.append((l + [v], remain))
-                else:
-                    yield l + [v]
+        q = [([], vals)]
+        for left, right in q:
+            if not right:
+                yield left
+            q.extend((left + [v], right[:i] + right[i+1:]) for i, v in enumerate(right))
 
 
 def test_permutations():
@@ -715,20 +710,19 @@ class Combination:
             yield from self.combos_recur(left + [v], right[i+1:])
 
     def combos_iter(self, vals):
-        stk = [([], vals)]
-        for l, r in stk:
+        q = [([], vals)]
+        for l, r in q:
             for i, v in enumerate(r):
                 yield l + [v]
-                stk.append((l + [v], r[i+1:]))
+                q.append((l + [v], r[i+1:]))
 
 
 def test_combos():
     combo = Combination()
     res = combo.combos_recur(left=[], right=list('1234'))
-    print('\n'.join(''.join(c) for c in res))
-    print()
+    print(', '.join(''.join(c) for c in res))
     res = combo.combos_iter(vals=list('1234'))
-    print('\n'.join(''.join(c) for c in res))
+    print(', '.join(''.join(c) for c in res))
 
 
-# test_combos()
+test_combos()
