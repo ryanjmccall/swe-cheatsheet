@@ -564,7 +564,6 @@ class Sort(object):
                 a[k] = right[j]
                 j += 1
             k += 1
-
         while i < len(left):
             a[k] = left[i]
             i += 1
@@ -579,7 +578,6 @@ class Sort(object):
 # partition
 
 # quicksort
-
 def test_sort():
     myList = [54, 26, 93, 17, 77, 31, 44, 55, 20]
     Sort().mergesort(myList)
