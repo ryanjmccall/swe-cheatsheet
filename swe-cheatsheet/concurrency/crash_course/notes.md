@@ -7,14 +7,14 @@ Multicore machines can have a dedicated core run each thread, however
 Networking and disk I/O can see significant performance gains
 
 Process
-- program in exeuction, instructions, user data, system data, CPU, memory, address space, disk, network I/O
+- program in execution, instructions, user data, system data, CPU, memory, address space, disk, network I/O
 
 Thread
 - smallest unit of execution in a process. has thread-private state but also can access process-shared state
 - shared state is guarded by various programming constructs
 
 Concurrency
-- doing multiple things at once using time sharing
+- doing multiple things at once using time-sharing
 
 Parallelism
 - doing multiple things at once by using multiple workers
@@ -36,7 +36,7 @@ Synchronous execution
 
 Asynchronous execution
 - execution that doesn't block when invoking subroutines
-- subroutine returns future/promise or a callback function is passed to the asynch function call
+- subroutine returns future/promise or a callback function is passed to the async function call
 - good for network or disk I/O
 
 CPU bound
@@ -94,7 +94,11 @@ Condition variables
 ```
 cond = Condition(Lock())  # or Condition()
 cond.acquire()
-cond.wait()
+
+while some_condition:
+  cond.wait()
+
+cond.release()
 ```
 
 Monitor
@@ -102,12 +106,12 @@ Monitor
 - predicate always tested in a while loop
 - Python "Condition" which implicitly has a lock or may be passed one
 - mutex with a wait set and entry set
-- allows threads to exercise mutual exclusion as well as cooperation 
+- allow threads to exercise mutual exclusion as well as cooperation 
 - threads enter the entry set, then one may enter the monitor, they may then wait in the wait set OR
 they may leave the monitor after signaling
 - python monitors are Hoare monitors which requires checking for condition in a while loop
 - language-level construct (mutex, semaphore lower level)
-- prepacked solution, less error prone than semaphore, but semaphores are more lightweight
+- prepacked solution, less error-prone than semaphore, but semaphores are more lightweight
 
 GIL
 - execution of Python bytecode requires acquiring a single lock providing exclusive access to python interpreter
@@ -119,20 +123,21 @@ Amdahl's law
 - S(n) = 1 / [(1-P) + P/n]
 
 Daemon Thread
-- runs in the background, program may exit if the daemon thread is still not finished, but python program
-will wait for non-daemon
-- daemons are shut down abruptly so open resources would not be closed properly
+- runs in the background, Python programs will exit if only daemons are running, but will wait for non-daemon
+- daemons are shut down abruptly so open resources will not be closed properly
 
 Semaphore
 - atomic counter that's decremented when acquire() (blocking) and incremented when release()
-- sem = Semaphore(5)
+- `sem = Semaphore(0)` -> first `acquire()` will block until `release()`
 
 Event
 - convenience class and wrapper over a condition variable with a Boolean predicate
+  - exposes `set()` and `clear()`
 - most common setup for many cooperating threads where two or more threads coordinate among themselves on a Boolean
 - semaphore can be incremented multiple times, while an event has a Boolean state
 - thread never blocks on wait() of an event object if the internal flag is set to true no matter how many times the thread
 invokes wait()
+- A thread never gets blocked on wait() of an event object if the internal flag is set to true no matter how many times the thread invokes the wait() method.
 
 Timer
 - allows execution of a callable after a certain amount of time has passed
@@ -157,7 +162,7 @@ With
 
 - Forking in Python
   - create new python interpreter with own GIL
-  - forking and multithreading dont mix well
+  - forking and multithreading don't mix well
 
 - Spawn
   - fork followed by exec
@@ -172,4 +177,15 @@ With
 - IPC
   - Queues: Simple, Queue, Joinable Queue
     - elements must be picklable
-  - Pipes: twoway comm b/w processes but only one can write at a time
+    - best to use a Queue created by a Manager
+  - Pipes: two-way comm b/w processes but only one can write at a time
+
+- Shared Objects
+  - Value: `pi = Value('d', 3.1415)`
+  - Array: `arr = Array('i', range(5))`
+
+- Manager
+  - share data between processes that may be running on different machines
+  - uses proxy pattern to enable sharing of objects across different processes
+  - proxy represents another object called subject/reference in front of clients
+  - Namespace is a type that can be registered with a SyncManager for sharing between processes.

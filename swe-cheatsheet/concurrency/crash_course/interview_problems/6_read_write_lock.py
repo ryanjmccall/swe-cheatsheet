@@ -71,6 +71,7 @@ def writer_thread(lock):
         lock.release_write_lock()
         time.sleep(1)
 
+
 def reader_thread(lock):
     while 1:
         lock.acquire_read_lock()
@@ -82,6 +83,7 @@ def reader_thread(lock):
                                                                           lock.write_ongoing), flush=True)
         lock.release_read_lock()
         time.sleep(1)
+
 
 if __name__ == "__main__":
     lock = ReadersWriteLock()

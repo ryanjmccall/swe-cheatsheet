@@ -57,7 +57,7 @@ def producer_thread(q):
         future = q.enqueue(item)
         if future:
             future.item = item
-            future.q = q
+            future.deq = q
             future.add_done_callback(retry_enqueue)
 
         item += 1
@@ -66,11 +66,11 @@ def producer_thread(q):
 
 def retry_enqueue(future):
     item = future.item
-    q = future.q
+    q = future.deq
     new_future = q.enqueue(item)
     if new_future:
         new_future.item = item
-        new_future.q = q
+        new_future.deq = q
         new_future.add_done_callback(retry_enqueue)
     else:
         print("\n{0} successfully added on a retry".format(item))

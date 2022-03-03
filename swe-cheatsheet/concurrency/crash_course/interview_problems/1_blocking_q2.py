@@ -1,42 +1,37 @@
 import time
 from threading import Condition, Thread
 from collections import deque
+from typing import Any
 
 
 class BlockingQueue:
     def __init__(self, limit: int):
+        if limit > 10e6:
+            raise ValueError('limit cannot exceed 1M')
+
         self.limit = limit
-        self.size = 0
         self.cond = Condition()
-        self.q = deque([])
+        self.deq = deque([])
 
-    def enqueue(self, val):
-        self.cond.acquire()
-        while self.size == self.limit:
-            self.cond.wait()
+    def enqueue(self, item: Any):
+        with self.cond:
+            while len(self.deq) == self.limit:
+                self.cond.wait()
 
-        # critical section
-        self.q.append(val)
-        self.size += 1
-        # /critical
+            self.deq.append(item)
 
-        self.cond.notify_all()
-        self.cond.release()
+            self.cond.notify_all()
 
+    def dequeue(self) -> Any:
+        with self.cond:
+            while not self.deq:
+                self.cond.wait()
 
-    def dequeue(self):
-        self.cond.acquire()
-        while not self.q:
-            self.cond.wait()
+            item = self.deq.popleft()
 
-        # critical
-        res = self.q.popleft()
-        self.size -= 1
-        # /critical
+            self.cond.notify_all()
 
-        self.cond.notify_all()
-        self.cond.release()
-        return res
+        return item
 
 
 def producer(bq: BlockingQueue):
@@ -69,3 +64,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
