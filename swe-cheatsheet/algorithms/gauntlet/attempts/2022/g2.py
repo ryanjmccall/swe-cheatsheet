@@ -141,7 +141,7 @@ def dfs_iter(g: dict, root: int):
 
 
 # cycle detection using recursion
-def has_cycle(g: dict, root: int):
+def has_cycle(g: dict):
     seen = set()
 
     def dfs(n: int) -> bool:
@@ -153,7 +153,33 @@ def has_cycle(g: dict, root: int):
         seen.remove(n)
         return False
 
-    return any(dfs(v) for v in g if v not in seen)
+    return any(dfs(v) for v in list(g) if v not in seen)
+
+
+print('dcg has cycle: ', has_cycle(sample_dcg()))
+print('dag has cycle: ', has_cycle(sample_dag()))
+
+
+
+def has_cycle2(graph: dict):
+    all_visits = set()
+    current_visit = set()
+
+    def _has_cycle(n: int) -> bool:
+        all_visits.add(n)
+        current_visit.add(n)
+        for neighbor in graph[n]:
+            if neighbor in current_visit or _has_cycle(neighbor):
+                return True
+
+        current_visit.remove(n)
+        return False
+
+    return any(_has_cycle(node)
+               for node in graph
+               if node not in all_visits)
+
+
 
 # bonus: topological sort
 # cycle detection using top sort
@@ -232,7 +258,7 @@ def sample_tree():
 
 # quicksort
 
-def test_sort():
+def try_sort():
     myList = [54, 26, 93, 17, 77, 31, 44, 55, 20]
     # TODO
     assert myList == [17, 20, 26, 31, 44, 54, 55, 77, 93]
@@ -250,7 +276,7 @@ def test_sort():
 # permutation iter
 
 
-def test_permutations():
+def try_permutations():
     vals = [3, 4, 5]
 
 # combination recur
@@ -258,5 +284,5 @@ def test_permutations():
 # combination iter
 
 
-def test_combos():
+def try_combos():
     vals = list('1234')

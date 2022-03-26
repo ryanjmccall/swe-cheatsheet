@@ -504,7 +504,7 @@ def partition(a, left, right) -> int:
 
 
 # quickselect
-def quickselect(a: List[int], target: int) -> int:
+def quickselect1(a: List[int], target: int) -> int:
     # find the target element in an unordered list
     target = len(a) - target
     left = 0
@@ -519,6 +519,39 @@ def quickselect(a: List[int], target: int) -> int:
         else:
             return index
     return -1
+
+
+def quickselect(array, k):
+    k_idx = k - 1
+
+    def helper(start_idx, end_idx):
+        while start_idx <= end_idx:
+            pivot = start_idx
+            left, right = start_idx + 1, end_idx
+            while left <= right:
+                if array[right] < array[pivot] < array[left]:
+                    swap(left, right, array)
+                if array[left] <= array[pivot]:
+                    left += 1
+                if array[right] >= array[pivot]:
+                    right -= 1
+
+            swap(pivot, right, array)
+            if right == k_idx:
+                return array[k_idx]
+            elif right < k_idx:
+                start_idx = right + 1
+            else:
+                end_idx = right - 1
+
+    return helper(0, len(array) - 1)
+
+
+def swap(a_idx, b_idx, array):
+    array[a_idx], array[b_idx] = array[b_idx], array[a_idx]
+
+
+print(quickselect(array=[8, 5, 2, 9, 7, 6, 3], k=3))
 
 
 # binary search
@@ -721,6 +754,3 @@ def test_combos():
     print(', '.join(''.join(c) for c in res))
     res = combo.combos_iter(vals=list('1234'))
     print(', '.join(''.join(c) for c in res))
-
-
-test_combos()
